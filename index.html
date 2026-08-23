@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>GOTCHA App</title>
 
-  <!-- Fix for missing favicon 404 error -->
   <link rel="icon" href="data:," />
 
   <!-- Tailwind CSS -->
@@ -37,14 +36,7 @@
       darkMode: 'class',
       theme: {
         extend: {
-          fontFamily: { sans: ['Inter', 'sans-serif'] },
-          colors: {
-            night: {
-              950: '#020617',
-              900: '#0f172a',
-              800: '#1e293b'
-            }
-          }
+          fontFamily: { sans: ['Inter', 'sans-serif'] }
         }
       }
     }
@@ -56,69 +48,50 @@
     body {
       margin: 0;
       font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background: #020617;
-      color: #e2e8f0;
+      background: #000000;
+      color: #e5e5e5;
       -webkit-font-smoothing: antialiased;
     }
 
     /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     /* Custom scrollbar */
     ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: rgba(15,23,42,0.5); }
-    ::-webkit-scrollbar-thumb { background: rgba(167,139,250,0.3); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(167,139,250,0.6); }
+    ::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
 
-    /* NIGHT GLASS IMAGE BACKGROUND */
-    .night-bg {
+    /* BLACK MONOCHROMATIC BACKGROUND */
+    .black-bg {
         position: fixed;
         inset: 0;
         width: 100vw;
         height: 100vh;
-        background-image: url('https://i.imgur.com/J3ZEdiB.png');
-        background-size: cover;
-        background-position: center;
+        background: radial-gradient(circle at 50% 0%, #111111 0%, #000000 70%);
         z-index: -2;
-        background-color: #020617;
     }
 
-    /* Vignette effect */
-    .night-overlay {
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(circle at center, transparent 0%, #020617 150%);
-        opacity: 0.9;
-        z-index: -1;
-        pointer-events: none;
+    /* BLACK GLASS CARDS */
+    .black-glass-card {
+        background: rgba(20, 20, 20, 0.4);
+        backdrop-filter: blur(40px);
+        -webkit-backdrop-filter: blur(40px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
     }
 
-    /* ULTRA FROSTED GLASS CARDS */
-    .night-glass-card {
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(40px) saturate(150%);
-        -webkit-backdrop-filter: blur(40px) saturate(150%);
-        border: 1px solid rgba(167, 139, 250, 0.2);
-        border-top: 1px solid rgba(255, 255, 255, 0.1); /* Subtle top light reflection */
-        box-shadow: 0 50px 100px rgba(0, 0, 0, 0.65), 0 0 80px rgba(124, 58, 237, 0.15);
+    .black-glass-card-subtle {
+        background: rgba(30, 30, 30, 0.3);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
     }
 
-    .night-glass-card-subtle {
-        background: rgba(15, 23, 42, 0.4);
-        backdrop-filter: blur(25px) saturate(120%);
-        -webkit-backdrop-filter: blur(25px) saturate(120%);
-        border: 1px solid rgba(167, 139, 250, 0.15);
-        border-top: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    /* LOGO RADIAL GLOW & FLOAT EFFECT */
+    /* LOGO RADIAL GLOW */
     .logo-box {
         position: relative;
         display: flex;
@@ -129,86 +102,85 @@
     .logo-box::before {
         content: "";
         position: absolute;
-        width: 150px;
-        height: 150px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(168, 85, 247, 0.65), rgba(99, 102, 241, 0.45), rgba(37, 99, 235, 0.2), transparent 75%);
-        filter: blur(28px);
+        background: radial-gradient(circle, rgba(255, 255, 255, 0.2), transparent 70%);
+        filter: blur(25px);
         animation: logoGlowPulse 4s infinite ease-in-out;
         pointer-events: none;
     }
 
     @keyframes logoGlowPulse {
-        0%, 100% { transform: scale(1); opacity: 0.8; }
-        50% { transform: scale(1.22); opacity: 1; }
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.8; }
     }
 
-    /* PILL BUTTONS */
-    .night-btn-primary {
-        background: linear-gradient(135deg, #a855f7, #6366f1, #2563eb);
-        color: white;
-        box-shadow: 0 15px 35px rgba(99, 102, 241, 0.45);
-        transition: all 0.3s ease;
-        border-radius: 9999px; /* Pill shape */
+    /* SOLID WHITE BUTTONS */
+    .black-btn-primary {
+        background: #ffffff;
+        color: #000000;
+        box-shadow: 0 10px 25px rgba(255, 255, 255, 0.15);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
-    .night-btn-primary:hover {
+    .black-btn-primary:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 20px 45px rgba(99, 102, 241, 0.65);
+        box-shadow: 0 15px 35px rgba(255, 255, 255, 0.25);
+        background: #f0f0f0;
     }
 
-    .night-btn-link {
-        background: rgba(15, 23, 42, 0.6);
+    /* SECONDARY BUTTONS */
+    .black-btn-link {
+        background: rgba(255, 255, 255, 0.05);
         backdrop-filter: blur(12px);
         -webkit-backdrop-filter: blur(12px);
-        border: 1px solid rgba(167, 139, 250, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: #ffffff;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border-radius: 9999px; /* Pill shape */
+    }
+    .black-btn-link:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
     }
 
-    .night-btn-link:hover {
-        background: rgba(30, 41, 59, 0.8);
-        border-color: rgba(168, 85, 247, 0.7);
-        transform: translateY(-3px);
-        box-shadow: 0 12px 30px rgba(124, 58, 237, 0.35);
-    }
-
-    /* PILL INPUTS */
+    /* INPUT STYLES */
     .control-input {
         width: 100%;
-        background: rgba(15, 23, 42, 0.65);
-        border: 1px solid rgba(167, 139, 250, 0.45);
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.15);
         color: #ffffff;
-        border-radius: 9999px; /* Pill shape */
-        padding: 1rem 1.5rem; /* Taller padding for touch targets */
+        border-radius: 9999px;
+        padding: 1rem 1.25rem;
         outline: none;
         transition: all 0.3s ease;
         font-size: 1rem;
     }
-
-    .control-input::placeholder { color: rgba(255, 255, 255, 0.5); }
-
+    .control-input::placeholder { color: rgba(255, 255, 255, 0.3); }
     .control-input:focus {
-        border-color: #60a5fa;
-        background: rgba(15, 23, 42, 0.85);
-        box-shadow: 0 0 25px rgba(96, 165, 250, 0.4);
-        transform: translateY(-1px);
+        border-color: rgba(255, 255, 255, 0.5);
+        background: rgba(20, 20, 20, 0.8);
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
     }
+    .control-input.border-red-500 { border-color: #ef4444; }
 
-    .control-input.border-red-500, .control-input.border-red-500:focus {
-        border-color: #f87171;
+    /* Bottom Sheet Animation for Mobile */
+    @keyframes slideUp {
+        from { transform: translateY(100%); opacity: 0; }
+        to { transform: translateY(0); opacity: 1; }
     }
+    .animate-slide-up { animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    
+    /* Target Reveal Blur Animation */
+    .motion-blur { filter: blur(2px); transform: scale(1.02); opacity: 0.8; }
   </style>
 </head>
-<body class="text-white min-h-screen w-full relative overflow-x-hidden selection:bg-purple-500/30 antialiased">
-  <!-- Fullscreen Background Image -->
-  <div class="night-bg"></div>
-  <div class="night-overlay"></div>
+<body class="text-white min-h-screen w-full relative overflow-x-hidden selection:bg-white/30 antialiased">
+  <div class="black-bg"></div>
 
   <div id="root"></div>
 
   <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    const { useState, useEffect, useMemo, useRef } = React;
 
     // --- Supabase ---
     const SUPABASE_URL = 'https://nmmshjdknmuzpgpquwec.supabase.co';
@@ -219,13 +191,13 @@
 
     const fetchHouses = async () => {
       const { data, error } = await supabase.from('houses').select('*').order('name');
-      if (error) { console.error('fetchHouses', error); return []; }
+      if (error) return [];
       return data.map(h => ({ id: h.id, name: h.name, points: h.points }));
     };
 
     const fetchPlayers = async () => {
       const { data, error } = await supabase.from('players').select('*').order('name');
-      if (error) { console.error('fetchPlayers', error); return []; }
+      if (error) return [];
       return data.map(p => ({
         id: p.id,
         name: p.name,
@@ -235,35 +207,26 @@
         eliminations: p.eliminations,
         hasGoldenDart: p.has_golden_dart,
         studentId: p.student_id,
-        photoUrl: p.photo_url
+        photoUrl: p.photo_url,
+        targetAssignedAt: p.target_assigned_at
       }));
     };
 
     const fetchGameActive = async () => {
       const { data, error } = await supabase.from('game_state').select('active').eq('id', 1).maybeSingle();
-      if (error) { console.error('fetchGameActive', error); return false; }
+      if (error) return false;
       return data ? data.active : false;
     };
 
     const fetchTimesheetRoster = async () => {
-      const { data: settingRow, error: settingsError } = await supabase
-        .from('settings')
-        .select('value')
-        .eq('key', 'ActiveYear')
-        .maybeSingle();
+      const { data: settingRow, error: settingsError } = await supabase.from('settings').select('value').eq('key', 'ActiveYear').maybeSingle();
       if (settingsError) throw new Error(settingsError.message);
       const activeYear = settingRow && settingRow.value;
-      if (!activeYear) throw new Error('Could not find an active academic year in the timesheet settings.');
+      if (!activeYear) throw new Error('Could not find an active academic year.');
 
-      const { data: rosterRows, error: rosterError } = await supabase
-        .from('roster')
-        .select('student_id, name, team')
-        .eq('academic_year', activeYear)
-        .order('name');
+      const { data: rosterRows, error: rosterError } = await supabase.from('roster').select('student_id, name, team').eq('academic_year', activeYear).order('name');
       if (rosterError) throw new Error(rosterError.message);
-      if (!rosterRows || rosterRows.length === 0) {
-        throw new Error(`No students found on the ${activeYear} timesheet roster.`);
-      }
+      if (!rosterRows || rosterRows.length === 0) throw new Error(`No students found for ${activeYear}.`);
 
       return {
         activeYear,
@@ -279,26 +242,20 @@
     };
 
     const IconWrapper = ({ name, size = 24, className = '', color = 'currentColor' }) => {
-      const iconRef = React.useRef(null);
-
-      React.useEffect(() => {
+      const iconRef = useRef(null);
+      useEffect(() => {
         if (iconRef.current && window.lucide) {
            window.lucide.createIcons({
              icons: { [name]: window.lucide.icons[name] },
              nameAttr: 'data-lucide',
-             attrs: {
-               class: className,
-               width: size,
-               height: size,
-               stroke: color
-             }
+             attrs: { class: className, width: size, height: size, stroke: color }
            });
         }
       }, [name, size, className, color]);
-
       return <i ref={iconRef} data-lucide={name} className={className} style={{ width: size, height: size }}></i>;
     };
 
+    // Icons
     const Crosshair = (props) => <IconWrapper name="crosshair" {...props} />;
     const ShieldAlert = (props) => <IconWrapper name="shield-alert" {...props} />;
     const Trophy = (props) => <IconWrapper name="trophy" {...props} />;
@@ -314,7 +271,9 @@
     const LogOut = (props) => <IconWrapper name="log-out" {...props} />;
     const RefreshCw = (props) => <IconWrapper name="refresh-cw" {...props} />;
     const Trash2 = (props) => <IconWrapper name="trash-2" {...props} />;
-    const UserCog = (props) => <IconWrapper name="user-cog" {...props} />;
+    const HeartPulse = (props) => <IconWrapper name="heart-pulse" {...props} />;
+    const UserMinus = (props) => <IconWrapper name="user-minus" {...props} />;
+    const Edit3 = (props) => <IconWrapper name="edit-3" {...props} />;
 
     const DEFAULT_HOUSES = [
       { id: 'H1', name: 'Gryffindor', points: 0 },
@@ -326,10 +285,10 @@
     const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false, type = 'button' }) => {
       const baseStyle = "px-6 py-4 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2";
       const variants = {
-        primary: "night-btn-primary",
-        secondary: "night-btn-link text-white",
-        danger: "bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-[0_0_15px_rgba(225,29,72,0.4)] rounded-full",
-        outline: "border-2 border-purple-400/50 text-purple-300 hover:bg-purple-500/20 rounded-full"
+        primary: "black-btn-primary",
+        secondary: "black-btn-link",
+        danger: "bg-red-500 text-white hover:bg-red-600 shadow-[0_0_15px_rgba(239,68,68,0.3)]",
+        outline: "border border-white/20 text-white hover:bg-white/10"
       };
 
       return (
@@ -337,7 +296,7 @@
           type={type}
           onClick={onClick}
           disabled={disabled}
-          className={`${baseStyle} ${variants[variant]} ${disabled ? 'opacity-50 cursor-not-allowed shadow-none' : 'active:scale-95'} ${className}`}
+          className={`${baseStyle} ${variants[variant]} ${disabled ? 'opacity-50 cursor-not-allowed hover:transform-none shadow-none' : 'active:scale-95'} ${className}`}
         >
           {children}
         </button>
@@ -347,13 +306,14 @@
     const Modal = ({ isOpen, onClose, title, children }) => {
       if (!isOpen) return null;
       return (
-        <div className="fixed inset-0 bg-slate-950/80 flex items-end sm:items-center justify-center p-0 sm:p-4 z-[60] backdrop-blur-md transition-all">
-          <div className="night-glass-card rounded-t-[40px] rounded-b-none sm:rounded-[32px] w-full max-w-md overflow-hidden shadow-2xl border-purple-400/40 animate-in slide-in-from-bottom-8 sm:zoom-in duration-300 max-h-[90vh] flex flex-col">
-            <div className="p-6 border-b border-purple-500/20 flex justify-between items-center bg-slate-900/60 shrink-0">
-              <h3 className="font-black text-xl text-white tracking-tight">{title}</h3>
-              <button onClick={onClose} className="text-purple-200 hover:text-white transition-colors bg-slate-800 border border-purple-400/30 w-10 h-10 rounded-full flex items-center justify-center active:scale-95">&times;</button>
+        <div className="fixed inset-0 bg-black/80 flex items-end md:items-center justify-center z-[70] backdrop-blur-md transition-opacity">
+          <div className="black-glass-card w-full md:max-w-md overflow-hidden shadow-2xl rounded-t-[40px] md:rounded-[36px] animate-slide-up md:animate-none">
+            <div className="p-6 border-b border-white/10 flex justify-between items-center relative">
+              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/20 rounded-full md:hidden"></div>
+              <h3 className="font-bold text-xl text-white mt-2 md:mt-0">{title}</h3>
+              <button onClick={onClose} className="text-white/50 hover:text-white transition-colors bg-white/5 border border-white/10 w-8 h-8 rounded-full flex items-center justify-center mt-2 md:mt-0">&times;</button>
             </div>
-            <div className="p-6 overflow-y-auto no-scrollbar pb-12 sm:pb-6">
+            <div className="p-6 pb-12 md:pb-6 max-h-[80vh] overflow-y-auto no-scrollbar">
               {children}
             </div>
           </div>
@@ -361,20 +321,20 @@
       );
     };
 
-    const PlayerAvatar = ({ player, size = 96 }) => {
+    const PlayerAvatar = ({ player, size = 96, className = '' }) => {
       if (player && player.photoUrl) {
         return (
           <img
             src={player.photoUrl}
             alt={player.name}
-            className="rounded-full object-cover border-4 border-purple-400/20 shadow-[0_0_20px_rgba(0,0,0,0.5)] shrink-0"
+            className={`rounded-full object-cover border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)] shrink-0 ${className}`}
             style={{ width: size, height: size }}
           />
         );
       }
       return (
-        <div className="bg-slate-900/60 rounded-full flex items-center justify-center border-4 border-purple-400/20 shadow-[0_0_20px_rgba(0,0,0,0.5)] shrink-0" style={{ width: size, height: size }}>
-          <User size={Math.round(size * 0.42)} className="text-slate-400" />
+        <div className={`bg-white/5 rounded-full flex items-center justify-center border border-white/20 shadow-[0_0_20px_rgba(0,0,0,0.5)] shrink-0 ${className}`} style={{ width: size, height: size }}>
+          <User size={Math.round(size * 0.45)} className="text-white/40" />
         </div>
       );
     };
@@ -385,24 +345,20 @@
 
       const handleSubmit = (e) => {
         e.preventDefault();
-        if (password === 'Staff49!') {
-          onLogin();
-        } else {
-          setError(true);
-          setPassword('');
-        }
+        if (password === 'Staff49!') onLogin();
+        else { setError(true); setPassword(''); }
       };
 
       return (
-        <div className="flex flex-col items-center justify-center py-12 px-4">
-          <div className="night-glass-card p-8 rounded-[32px] w-full max-w-sm shadow-2xl relative overflow-hidden text-center">
-            <div className="logo-box mb-6 justify-center">
-              <div className="w-20 h-20 rounded-[20px] bg-slate-900/50 border border-purple-400/30 flex items-center justify-center relative z-10 shadow-lg">
-                <ShieldAlert size={36} className="text-purple-300" />
+        <div className="flex flex-col items-center justify-center py-12 px-4 h-[80vh]">
+          <div className="black-glass-card p-8 sm:p-10 rounded-[40px] w-full max-w-sm shadow-2xl relative overflow-hidden text-center">
+            <div className="logo-box mb-8 justify-center">
+              <div className="w-20 h-20 rounded-3xl bg-black border border-white/10 flex items-center justify-center relative z-10 shadow-lg">
+                <img src="https://i.imgur.com/p2qZOL5.png" alt="GOTCHA Logo" className="w-12 h-12 object-contain" />
               </div>
             </div>
             <h2 className="text-2xl font-black text-white text-center mb-2 tracking-tight">Admin Access</h2>
-            <p className="text-purple-200/70 text-sm text-center mb-8 leading-relaxed">Enter the staff password to manage the game.</p>
+            <p className="text-white/40 text-sm text-center mb-8 leading-relaxed">Enter the staff password to manage the hunting grounds.</p>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -414,16 +370,16 @@
                   className={`control-input ${error ? 'border-red-500' : ''} !text-center font-mono`}
                   autoFocus
                 />
-                {error && <p className="text-red-400 text-xs mt-2 text-center font-bold">Incorrect password.</p>}
+                {error && <p className="text-red-400 text-xs mt-3 text-center font-bold">Incorrect password.</p>}
               </div>
-              <Button type="submit" variant="primary" className="w-full text-lg mt-2">Authenticate</Button>
+              <Button type="submit" variant="primary" className="w-full mt-2">Authenticate</Button>
             </form>
           </div>
         </div>
       );
     };
 
-    const PlayerLogin = ({ onLogin }) => {
+    const PlayerLogin = ({ onLogin, onAdminClick }) => {
       const [studentId, setStudentId] = useState('');
       const [error, setError] = useState('');
       const [busy, setBusy] = useState(false);
@@ -431,30 +387,24 @@
       const handleSubmit = async (e) => {
         e.preventDefault();
         if (!studentId.trim()) return;
-        setBusy(true);
-        setError('');
+        setBusy(true); setError('');
         const result = await onLogin(studentId.trim());
         setBusy(false);
-        if (!result.success) {
-          setError(result.message);
-          setStudentId('');
-        }
+        if (!result.success) { setError(result.message); setStudentId(''); }
       };
 
       return (
-        <div className="flex flex-col items-center justify-center py-12 px-4">
-          <div className="night-glass-card p-8 sm:p-10 rounded-[32px] w-full max-w-sm shadow-2xl relative overflow-hidden text-center">
-            <div className="logo-box mb-6 justify-center">
-              <img
-                src="https://i.imgur.com/p2qZOL5.png"
-                alt="GOTCHA Logo"
-                className="w-28 h-28 object-contain relative z-10 drop-shadow-[0_0_15px_rgba(168,85,247,0.6)]"
-              />
+        <div className="flex flex-col items-center justify-center py-12 px-4 h-[80vh]">
+          <div className="black-glass-card p-8 sm:p-10 rounded-[40px] w-full max-w-sm shadow-2xl relative overflow-hidden text-center">
+            <div className="logo-box mb-8 justify-center">
+              <div className="w-20 h-20 rounded-3xl bg-black border border-white/10 flex items-center justify-center relative z-10 shadow-lg">
+                <img src="https://i.imgur.com/p2qZOL5.png" alt="GOTCHA Logo" className="w-12 h-12 object-contain" />
+              </div>
             </div>
-            <h2 className="text-3xl font-black text-white text-center mb-2 tracking-tight drop-shadow-md">GOTCHA</h2>
-            <p className="text-purple-200/70 text-sm text-center mb-8 leading-relaxed">Enter your Student ID to start the game and see your target.</p>
+            <h2 className="text-3xl font-black text-white text-center mb-2 tracking-tight">GOTCHA</h2>
+            <p className="text-white/40 text-sm text-center mb-8 leading-relaxed">Enter your Student ID to acquire your mission target.</p>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <input
                   type="text"
@@ -462,231 +412,266 @@
                   value={studentId}
                   onChange={(e) => { setStudentId(e.target.value); setError(''); }}
                   placeholder="Student ID"
-                  className={`control-input ${error ? 'border-red-500' : ''} !text-center font-mono text-lg`}
+                  className={`control-input ${error ? 'border-red-500' : ''} !text-center font-mono`}
                   autoFocus
                 />
                 {error && <p className="text-red-400 text-xs mt-3 text-center font-bold">{error}</p>}
               </div>
-              <Button type="submit" variant="primary" className="w-full text-lg shadow-[0_10px_25px_rgba(99,102,241,0.5)]" disabled={busy}>
-                {busy ? 'Checking...' : 'Continue'}
+              <Button type="submit" variant="primary" className="w-full mt-2" disabled={busy}>
+                {busy ? 'Authenticating...' : 'Enter the Hunt'}
               </Button>
             </form>
+
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <button 
+                type="button" 
+                onClick={onAdminClick} 
+                className="text-[10px] text-white/30 hover:text-white transition-colors uppercase font-bold tracking-widest flex items-center justify-center gap-1.5 mx-auto"
+              >
+                <Settings size={12} /> Staff / Admin Login
+              </button>
+            </div>
           </div>
         </div>
       );
     };
 
-    const DashboardView = ({ currentUser, players, onEliminate, onLogin, onLogout, onUseGoldenDart }) => {
+    const DashboardView = ({ currentUser, players, onEliminate, onUseGoldenDart, onLogout }) => {
       const [isModalOpen, setIsModalOpen] = useState(false);
-      const [isRevealing, setIsRevealing] = useState(false);
-      const [scrambleName, setScrambleName] = useState("");
       const [isDartModalOpen, setIsDartModalOpen] = useState(false);
-      const [selectedReviveId, setSelectedReviveId] = useState("");
+      const [isRevealing, setIsRevealing] = useState(false);
+      const [spinDisplay, setSpinDisplay] = useState(null);
+      const [timeLeft, setTimeLeft] = useState(null);
+      const [reviveTargetId, setReviveTargetId] = useState("");
 
       const target = useMemo(() => players.find(p => p.id === currentUser?.targetId), [players, currentUser]);
+      const eliminatedPlayers = useMemo(() => players.filter(p => p.status === 'eliminated'), [players]);
 
-      // Target decryption animation logic
+      // Target Reveal Spin Animation
       useEffect(() => {
         if (!currentUser) return;
         const key = `target_seen_${currentUser.id}_${currentUser.targetId}`;
         
-        // If they have a target, and we haven't logged that they've seen THIS specific target yet
-        if (currentUser.targetId && !localStorage.getItem(key)) {
+        // Trigger if they haven't seen this target AND it's not themselves (Victory state)
+        if (currentUser.targetId && currentUser.targetId !== currentUser.id && !localStorage.getItem(key)) {
           setIsRevealing(true);
-          let iteration = 0;
-          const maxIterations = 25; // number of cycles
-          const nameToScramble = target?.name || "ACQUIRING...";
+          
+          const pool = players.filter(p => p.id !== currentUser.id);
+          if (pool.length === 0 && target) pool.push(target);
+          if (pool.length === 0) pool.push(currentUser);
 
-          const interval = setInterval(() => {
-            const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&*";
-            setScrambleName(nameToScramble.split("").map((c, i) => {
-              if (c === " ") return " ";
-              // Decode from left to right gradually based on iteration
-              const threshold = (i / nameToScramble.length) * maxIterations;
-              return iteration > threshold ? c : chars[Math.floor(Math.random() * chars.length)];
-            }).join(""));
+          let spins = 0;
+          const maxSpins = 25;
+          let currentDelay = 50;
 
-            iteration++;
-            if (iteration > maxIterations) {
-              clearInterval(interval);
+          const spin = () => {
+            spins++;
+            if (spins >= maxSpins) {
+              setSpinDisplay(target);
               setIsRevealing(false);
-              localStorage.setItem(key, 'true');
+              localStorage.setItem(key, 'true'); 
+            } else {
+              setSpinDisplay(pool[Math.floor(Math.random() * pool.length)]);
+              if (spins > maxSpins * 0.6) currentDelay = currentDelay * 1.2;
+              setTimeout(spin, currentDelay);
             }
-          }, 80);
-          return () => clearInterval(interval);
+          };
+          spin();
+          return () => {};
         }
-      }, [currentUser, target]);
+      }, [currentUser, target, players]);
 
-      if (!currentUser) {
-        return <PlayerLogin onLogin={onLogin} />;
-      }
+      // Server-backed 24-hour Expiration Timer
+      useEffect(() => {
+        if (!currentUser || !currentUser.targetId || currentUser.targetId === currentUser.id || isRevealing || !currentUser.targetAssignedAt) {
+          setTimeLeft(null);
+          return;
+        }
+
+        const deadline = new Date(currentUser.targetAssignedAt).getTime() + (24 * 60 * 60 * 1000);
+
+        const updateTimer = () => {
+          const now = Date.now();
+          const diff = deadline - now;
+          
+          if (diff <= 0) {
+            setTimeLeft("00:00:00");
+            return false;
+          } else {
+            const h = Math.floor(diff / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const s = Math.floor((diff % (1000 * 60)) / 1000).toString().padStart(2, '0');
+            setTimeLeft(`${h}:${m}:${s}`);
+            return true;
+          }
+        };
+
+        const keepGoing = updateTimer();
+        if (!keepGoing) return;
+
+        const timerId = setInterval(() => {
+          if (!updateTimer()) clearInterval(timerId);
+        }, 1000);
+
+        return () => clearInterval(timerId);
+      }, [currentUser, isRevealing]);
+
+      if (!currentUser) return null;
 
       return (
-        <div className="max-w-3xl mx-auto space-y-6 pb-12">
-          {/* Player Identity Card */}
-          <div className="night-glass-card rounded-[32px] p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden shadow-2xl">
-            <div className="absolute top-0 left-0 w-full h-2 md:w-2 md:h-full bg-gradient-to-r md:bg-gradient-to-b from-purple-400 to-blue-600"></div>
-            <div className="flex flex-col sm:flex-row items-center gap-6 z-10 w-full md:w-auto text-center sm:text-left">
-              <PlayerAvatar player={currentUser} size={96} />
-              <div>
-                <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight break-words">{currentUser.name}</h1>
-                <div className="flex flex-wrap justify-center sm:justify-start items-center gap-3 mt-3">
-                  <span className="bg-slate-900/50 border border-purple-400/20 px-4 py-1.5 rounded-full text-sm font-bold text-purple-200">
-                    Team {currentUser.house}
+        <div className="max-w-2xl mx-auto space-y-4 sm:space-y-6 pb-12">
+          
+          {/* Player Identity Bar - Compact on Mobile */}
+          <div className="black-glass-card rounded-[28px] sm:rounded-[36px] p-4 sm:p-6 flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 sm:gap-5 w-full">
+              <PlayerAvatar player={currentUser} size={64} className="sm:!w-24 sm:!h-24" />
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl sm:text-3xl font-black text-white tracking-tight truncate pr-2">{currentUser.name}</h1>
+                <div className="flex items-center gap-2 mt-1 sm:mt-2">
+                  <span className="text-[10px] sm:text-xs font-bold text-white/50 bg-white/5 border border-white/10 px-2 sm:px-3 py-1 rounded-full whitespace-nowrap">
+                    {currentUser.house}
                   </span>
                   {currentUser.status === 'alive' ? (
-                    <span className="bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> ACTIVE
+                    <span className="text-[10px] sm:text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 sm:px-3 py-1 rounded-full flex items-center gap-1.5 whitespace-nowrap">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0"></span> ACTIVE
                     </span>
                   ) : (
-                    <span className="bg-rose-500/10 border border-rose-500/30 text-rose-400 px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5">
-                      <AlertCircle size={14} /> ELIMINATED
+                    <span className="text-[10px] sm:text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 sm:px-3 py-1 rounded-full flex items-center gap-1 whitespace-nowrap">
+                      <AlertCircle size={10} className="shrink-0" /> ELIMINATED
                     </span>
                   )}
-                  <button onClick={onLogout} className="night-btn-link px-4 py-1.5 rounded-full text-xs font-bold text-purple-300/60 hover:text-white flex items-center gap-1.5">
-                    <LogOut size={12} /> Not you?
-                  </button>
                 </div>
               </div>
             </div>
-
-            <div className="text-center md:text-right z-10 night-glass-card-subtle p-5 rounded-3xl border-purple-400/30 w-full md:w-auto shadow-inner">
-              <div className="text-xs text-purple-200/70 font-bold uppercase tracking-widest mb-1">Total Eliminations</div>
-              <div className="text-5xl font-black text-white drop-shadow-md">{currentUser.eliminations}</div>
+            <div className="text-right shrink-0">
+              <div className="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-0.5 sm:mb-1">Tags</div>
+              <div className="text-3xl sm:text-5xl font-black text-white leading-none">{currentUser.eliminations}</div>
+              <button onClick={onLogout} className="text-[9px] sm:text-xs text-white/30 hover:text-white mt-2 transition-colors uppercase tracking-widest font-bold">Logout</button>
             </div>
           </div>
 
+          {/* Golden Dart UI */}
           {currentUser.hasGoldenDart && (
-            <div className="bg-gradient-to-r from-yellow-500/20 to-transparent border border-yellow-500/30 p-6 rounded-[32px] flex flex-col sm:flex-row items-center gap-5 shadow-xl backdrop-blur-md">
-              <div className="bg-yellow-500/20 text-yellow-400 p-4 rounded-2xl border border-yellow-500/30 shrink-0">
-                <Star size={32} className="text-yellow-400" fill="currentColor" />
-              </div>
+            <div className="bg-white text-black p-5 sm:p-6 rounded-[28px] sm:rounded-[36px] flex flex-col sm:flex-row items-center gap-4 sm:gap-6 shadow-[0_0_30px_rgba(255,255,255,0.2)]">
+              <div className="bg-black/5 p-3 sm:p-4 rounded-2xl shrink-0"><Star size={32} className="text-black" fill="currentColor" /></div>
               <div className="text-center sm:text-left flex-1">
-                <h3 className="text-yellow-400 font-black text-xl mb-1">Golden Dart Secured</h3>
-                <p className="text-sm text-yellow-100/80 leading-relaxed">You possess a rare Golden Dart. Use it to revive yourself or another fallen player.</p>
+                <h3 className="font-black text-lg sm:text-xl tracking-tight">Golden Dart Secured</h3>
+                <p className="text-sm text-black/60 font-medium leading-relaxed mt-1">You possess a rare Golden Dart. Use it to immediately revive yourself or an eliminated friend.</p>
               </div>
-              <Button onClick={() => setIsDartModalOpen(true)} className="!bg-yellow-500 hover:!bg-yellow-400 !text-yellow-950 w-full sm:w-auto shadow-[0_10px_25px_rgba(234,179,8,0.4)] px-8">
-                Use Dart
+              <Button variant="primary" className="!bg-black !text-white w-full sm:w-auto shrink-0" onClick={() => setIsDartModalOpen(true)}>
+                Deploy Dart
               </Button>
             </div>
           )}
 
-          {/* Golden Dart Usage Modal */}
-          <Modal isOpen={isDartModalOpen} onClose={() => setIsDartModalOpen(false)} title="Use Golden Dart">
-            <div className="space-y-6">
-              <div className="bg-yellow-500/10 border border-yellow-500/20 p-5 rounded-2xl text-center">
-                <Star className="text-yellow-400 mx-auto mb-2" fill="currentColor" size={24} />
-                <p className="text-sm text-yellow-200 leading-relaxed">
-                  Select an eliminated player to revive. If you revive yourself, you will re-enter the game immediately.
-                </p>
-              </div>
-              
-              <div className="bg-slate-900/50 p-1 rounded-[24px]">
-                <select 
-                  value={selectedReviveId} 
-                  onChange={(e) => setSelectedReviveId(e.target.value)}
-                  className="control-input !bg-transparent !border-none !text-white text-base py-3 px-4 w-full cursor-pointer appearance-none outline-none focus:ring-0 shadow-none"
-                >
-                  <option value="" disabled className="bg-slate-900">Select a player to revive...</option>
-                  {currentUser.status === 'eliminated' && (
-                    <option value={currentUser.id} className="bg-slate-800 font-bold">✨ Revive Myself</option>
-                  )}
-                  {players.filter(p => p.status === 'eliminated' && p.id !== currentUser.id).map(p => (
-                    <option key={p.id} value={p.id} className="bg-slate-800">{p.name} - Team {p.house}</option>
-                  ))}
-                  {players.filter(p => p.status === 'eliminated').length === 0 && (
-                    <option value="none" disabled className="bg-slate-900">No players are currently eliminated.</option>
-                  )}
-                </select>
-              </div>
-
-              <div className="flex gap-3 pt-2">
-                <Button variant="secondary" className="flex-1" onClick={() => setIsDartModalOpen(false)}>Cancel</Button>
-                <Button 
-                  className="flex-1 !bg-yellow-500 hover:!bg-yellow-400 !text-yellow-950" 
-                  disabled={!selectedReviveId}
-                  onClick={() => {
-                    onUseGoldenDart(currentUser.id, selectedReviveId);
-                    setIsDartModalOpen(false);
-                    setSelectedReviveId("");
-                  }}
-                >
-                  Confirm Revival
-                </Button>
-              </div>
-            </div>
-          </Modal>
-
           {/* Target Card */}
           {currentUser.status === 'alive' ? (
-            <div className="night-glass-card rounded-[32px] p-1 relative overflow-hidden group">
-              <div className="absolute inset-0 bg-gradient-to-b from-purple-500/5 to-transparent pointer-events-none"></div>
-              <div className="night-glass-card-subtle rounded-[28px] border-purple-400/20 p-6 sm:p-10 relative overflow-hidden min-h-[400px] flex flex-col justify-center">
+            <div className="black-glass-card rounded-[32px] sm:rounded-[40px] relative overflow-hidden group">
+              <div className="p-6 sm:p-10 relative overflow-hidden min-h-[380px] sm:min-h-[460px] flex flex-col justify-center items-center">
+                
                 <div className="absolute right-0 top-0 opacity-[0.03] pointer-events-none group-hover:scale-110 transition-transform duration-700">
-                  <Target size={300} className="text-white transform translate-x-1/4 -translate-y-1/4" />
+                  <Target size={280} className="text-white transform translate-x-1/4 -translate-y-1/4" />
                 </div>
 
-                <h2 className="absolute top-6 sm:top-8 left-6 sm:left-8 text-sm font-bold text-purple-300/80 uppercase tracking-widest flex items-center gap-2">
-                  <Crosshair size={18} /> Mission Objective
-                </h2>
-
-                {isRevealing ? (
-                  <div className="flex flex-col items-center justify-center py-12 relative z-10 w-full mt-6">
-                    <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                      <Target size={200} className="text-purple-400 animate-ping" />
+                <div className="absolute top-5 sm:top-8 left-5 sm:left-8 right-5 sm:right-8 flex justify-between items-start z-20 pointer-events-none w-auto">
+                  <h2 className="text-[10px] sm:text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
+                    <Crosshair size={14} /> Mission
+                  </h2>
+                  
+                  {timeLeft && currentUser.targetId !== currentUser.id && (
+                    <div className="flex flex-col items-end pointer-events-auto bg-black/50 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-lg">
+                      <span className="text-[9px] text-white/50 font-bold uppercase tracking-widest mb-0.5 flex items-center gap-1"><Clock size={10}/> Expires</span>
+                      <span className={`text-base sm:text-xl font-mono font-black ${timeLeft === "00:00:00" ? "text-red-500 animate-pulse" : "text-white"} tracking-tight leading-none`}>{timeLeft}</span>
                     </div>
-                    <Crosshair size={72} className="text-purple-400 animate-spin mb-8 relative z-10" />
-                    <h3 className="text-3xl sm:text-4xl md:text-5xl font-black text-white text-center font-mono tracking-[0.1em] sm:tracking-[0.15em] relative z-10 drop-shadow-[0_0_15px_rgba(168,85,247,0.8)] px-2 w-full break-all leading-tight">
-                      {scrambleName}
-                    </h3>
-                    <p className="text-purple-400 mt-8 uppercase tracking-[0.2em] sm:tracking-[0.3em] text-xs font-bold animate-pulse relative z-10 text-center">
-                      Decrypting Target Profile...
-                    </p>
+                  )}
+                </div>
+
+                {currentUser.targetId === currentUser.id ? (
+                  <div className="flex flex-col items-center text-center z-10 animate-in fade-in zoom-in duration-1000 w-full mt-6">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full flex items-center justify-center mb-6 border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.2)]">
+                      <Trophy size={48} className="text-white" />
+                    </div>
+                    <h2 className="text-4xl sm:text-5xl font-black text-white tracking-tight mb-2 uppercase">Victory</h2>
+                    <p className="text-base sm:text-lg text-white/60 font-medium">You are the Last Hunter Standing.</p>
+                  </div>
+                ) : isRevealing ? (
+                  <div className="flex flex-col items-center justify-center relative z-10 w-full mt-8 sm:mt-4">
+                    <PlayerAvatar player={spinDisplay} size={140} className="motion-blur border-white/40 sm:!w-[160px] sm:!h-[160px]" />
+                    <h3 className="text-3xl sm:text-4xl font-black text-white mt-6 mb-2 tracking-tighter motion-blur truncate max-w-full px-4">{spinDisplay?.name || "ACQUIRING..."}</h3>
+                    <p className="text-white/50 uppercase tracking-[0.2em] text-[10px] sm:text-xs font-bold animate-pulse">Decrypting Target...</p>
                   </div>
                 ) : target ? (
-                  <div className="flex flex-col items-center justify-center py-8 relative z-10 mt-6 animate-in fade-in zoom-in duration-500">
-                    <div className="text-sm text-rose-400/80 bg-rose-500/10 px-5 py-1.5 rounded-full border border-rose-500/20 uppercase tracking-[0.3em] mb-6 font-bold animate-pulse">WANTED</div>
-                    <PlayerAvatar player={target} size={120} />
-                    <h3 className="text-3xl sm:text-4xl md:text-6xl font-black text-white mt-6 mb-3 text-center tracking-tight break-words px-2 leading-tight">{target.name}</h3>
-                    <p className="text-lg sm:text-xl text-purple-200/60 mb-10 flex items-center gap-2 font-medium">
-                      <span className="w-2 h-2 bg-purple-300/60 rounded-full"></span> Team {target.house} <span className="w-2 h-2 bg-purple-300/60 rounded-full"></span>
-                    </p>
-
-                    <Button variant="primary" className="w-full sm:w-auto px-12 text-lg" onClick={() => setIsModalOpen(true)}>
+                  <div className="flex flex-col items-center justify-center relative z-10 mt-8 sm:mt-4 animate-in fade-in zoom-in duration-500 w-full">
+                    <div className="text-[10px] text-white/70 bg-white/10 px-3 sm:px-4 py-1 rounded-full border border-white/20 uppercase tracking-[0.3em] mb-4 sm:mb-6 font-bold">WANTED</div>
+                    <PlayerAvatar player={target} size={140} className="border-white/30 sm:!w-[180px] sm:!h-[180px]" />
+                    <h3 className="text-3xl sm:text-5xl font-black text-white mt-6 sm:mt-8 mb-2 sm:mb-3 text-center tracking-tight truncate max-w-full px-4">{target.name}</h3>
+                    <p className="text-sm sm:text-base text-white/50 font-medium mb-8 sm:mb-10">{target.house}</p>
+                    <Button variant="primary" className="w-full sm:w-auto px-10 sm:px-14 py-4 sm:py-5 text-base sm:text-lg" onClick={() => setIsModalOpen(true)}>
                       Confirm Elimination
                     </Button>
                   </div>
                 ) : (
-                  <div className="text-center py-16 px-4 text-purple-200/50 italic bg-slate-900/30 rounded-[24px] border border-purple-400/10 relative z-10 mt-6 leading-relaxed">
-                    Connecting to network...<br/>Awaiting your next target assignment.
+                  <div className="text-center py-16 text-white/30 font-medium italic relative z-10 mt-6">
+                    Awaiting target assignment sequence...
                   </div>
                 )}
               </div>
             </div>
           ) : (
-            <div className="night-glass-card !bg-rose-950/40 rounded-[32px] !border-rose-500/40 p-8 sm:p-12 text-center shadow-xl">
-              <div className="w-24 h-24 bg-rose-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-rose-500/30">
-                <AlertCircle size={48} className="text-rose-400" />
+            <div className="black-glass-card rounded-[32px] sm:rounded-[40px] p-8 sm:p-12 text-center shadow-xl border-red-500/20 bg-red-950/10">
+              <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-red-500/20">
+                <AlertCircle size={40} className="text-red-500" />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white mb-4">Eliminated</h2>
-              <p className="text-rose-100/70 max-w-sm mx-auto leading-relaxed">Your watch has ended. Better luck next year, or stay alert for a Golden Dart!</p>
+              <h2 className="text-3xl sm:text-4xl font-black text-white mb-3 tracking-tight">Eliminated</h2>
+              <p className="text-white/50 text-sm sm:text-base max-w-sm mx-auto leading-relaxed font-medium">Your watch has ended. Better luck next year, or stay alert for a Golden Dart.</p>
             </div>
           )}
+
+          {/* Golden Dart Modal */}
+          <Modal isOpen={isDartModalOpen} onClose={() => setIsDartModalOpen(false)} title="Deploy Golden Dart">
+            <div className="space-y-6">
+              <p className="text-sm text-white/60 leading-relaxed font-medium">
+                The Golden Dart brings a player back into the active hunt. They will instantly be assigned a new target. Choose wisely.
+              </p>
+              
+              <div className="space-y-4">
+                <label className="block text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Select Player to Revive</label>
+                <select 
+                  className="control-input !rounded-2xl appearance-none bg-black/60"
+                  value={reviveTargetId}
+                  onChange={(e) => setReviveTargetId(e.target.value)}
+                >
+                  <option value="">-- Select an eliminated player --</option>
+                  {currentUser.status === 'eliminated' && <option value={currentUser.id}>Myself ({currentUser.name})</option>}
+                  {eliminatedPlayers.filter(p => p.id !== currentUser.id).map(p => (
+                    <option key={p.id} value={p.id}>{p.name} ({p.house})</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex gap-3 pt-2">
+                <Button variant="secondary" className="flex-1" onClick={() => setIsDartModalOpen(false)}>Cancel</Button>
+                <Button variant="primary" className="flex-1" disabled={!reviveTargetId} onClick={() => {
+                  onUseGoldenDart(currentUser.id, reviveTargetId);
+                  setIsDartModalOpen(false);
+                  setReviveTargetId("");
+                }}>Confirm Revive</Button>
+              </div>
+            </div>
+          </Modal>
 
           {/* Elimination Modal */}
           <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="Mission Success?">
             <div className="space-y-6">
-              <div className="bg-purple-500/10 border border-purple-500/20 p-5 rounded-2xl text-center">
-                <p className="text-base text-purple-200 leading-relaxed">
-                  Confirm you've eliminated <strong className="text-white text-xl block mt-2 break-words">{target?.name}</strong>
+              <div className="bg-white/5 border border-white/10 p-6 rounded-3xl text-center">
+                <p className="text-sm sm:text-base text-white/60 font-medium">
+                  Confirm you have eliminated <strong className="text-white text-xl sm:text-2xl block mt-2 tracking-tight">{target?.name}</strong>
                 </p>
               </div>
-
-              <div className="night-glass-card-subtle border-purple-400/30 p-4 rounded-xl flex items-center justify-center gap-3 shadow-inner">
-                 <Camera size={20} className="text-purple-300" />
-                 <span className="text-sm text-slate-300 font-medium">Photo proof in GroupMe required</span>
+              <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex items-center justify-center gap-3">
+                 <Camera size={18} className="text-white/50" />
+                 <span className="text-xs sm:text-sm text-white/70 font-bold uppercase tracking-wider">Photo proof required in chat</span>
               </div>
-
               <div className="flex gap-3 pt-2">
                 <Button variant="secondary" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancel</Button>
                 <Button variant="primary" className="flex-1" onClick={() => {
@@ -701,84 +686,84 @@
     };
 
     const RulesView = () => (
-      <div className="space-y-6 text-slate-300 pb-8">
-        <div className="night-glass-card-subtle p-6 sm:p-8 rounded-[32px] border-purple-400/25 shadow-xl">
-          <h2 className="text-2xl font-black text-purple-300 mb-4 flex items-center gap-2"><Target /> Objective</h2>
-          <p className="leading-relaxed">Each participant begins the game with one assigned target, one official GOTCHA Nerf dart, and a team assignment. Your goal is to eliminate your assigned target, stay in the game, earn points for yourself and your team, and help your team climb the leaderboard. The last two players remaining will win individual prizes, while teams compete for the overall CAB cup.</p>
+      <div className="space-y-4 sm:space-y-6 text-white/70 pb-8 max-w-4xl mx-auto">
+        <div className="black-glass-card-subtle p-6 sm:p-8 rounded-[32px] shadow-xl">
+          <h2 className="text-2xl font-black text-white mb-4 flex items-center gap-2 tracking-tight"><Target size={28}/> Objective</h2>
+          <p className="leading-relaxed text-sm sm:text-base font-medium">Each participant begins the game with one assigned target, one official GOTCHA Nerf dart, and a team assignment. Your goal is to eliminate your assigned target, stay in the game, earn points for yourself and your team, and help your team climb the leaderboard. The last two players remaining will win individual prizes.</p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-          <div className="night-glass-card-subtle p-6 sm:p-8 rounded-[32px] border-purple-400/25 shadow-xl h-full flex flex-col">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Crosshair className="text-purple-300"/> Eliminations</h3>
-            <ul className="list-disc pl-5 space-y-3 text-sm leading-relaxed flex-1">
-              <li>Eliminated when struck by the official GOTCHA Nerf dart provided by CAB.</li>
-              <li>Dart must be thrown by hand. No blasters/launchers.</li>
-              <li>Only the official dart may be used. No replacements.</li>
-              <li>Friendly fire does not count.</li>
-              <li>Must post elimination in official GroupMe within 15 mins (include photo/proof).</li>
-              <li>Once verified, you inherit the target of the person you eliminated.</li>
-            </ul>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <div className="black-glass-card-subtle p-6 sm:p-8 rounded-[32px] shadow-xl h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2"><Crosshair className="text-white/50"/> Eliminations</h3>
+              <ul className="list-disc pl-5 space-y-3 text-sm font-medium leading-relaxed">
+                <li>Eliminated when struck by the official GOTCHA Nerf dart provided by CAB.</li>
+                <li>Dart must be thrown by hand. No blasters/launchers.</li>
+                <li>Friendly fire does not count.</li>
+                <li>Must post elimination in official GroupMe within 15 mins (include photo).</li>
+                <li>Once verified, you inherit the target of the person you eliminated.</li>
+              </ul>
+            </div>
           </div>
 
-          <div className="night-glass-card-subtle p-6 sm:p-8 rounded-[32px] border-purple-400/25 shadow-xl h-full flex flex-col">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><ShieldAlert className="text-blue-400"/> Safe Zones</h3>
-            <p className="text-sm mb-4 font-bold text-blue-300 bg-blue-500/10 inline-block px-4 py-1.5 rounded-full border border-blue-500/20">Players may NOT be eliminated inside:</p>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm list-disc pl-5 flex-1">
-              <li>Academic buildings</li>
-              <li>Classrooms/Lecture halls</li>
-              <li>Residence halls/Apts</li>
-              <li>Dorm rooms</li>
-              <li>Bathrooms</li>
-              <li>Library</li>
-              <li>Religious services</li>
-              <li>Medical appts</li>
-              <li>Vehicles</li>
-              <li>Dining facilities</li>
-            </ul>
-            <p className="text-xs mt-5 p-4 bg-slate-900/40 rounded-2xl border border-purple-400/20 text-slate-400 text-center leading-relaxed">Outdoor campus spaces remain active. Should not interfere with training!</p>
+          <div className="black-glass-card-subtle p-6 sm:p-8 rounded-[32px] shadow-xl h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2"><ShieldAlert className="text-white/50"/> Safe Zones</h3>
+              <p className="text-xs mb-4 font-bold text-white bg-white/10 inline-block px-3 py-1.5 rounded-full border border-white/20 uppercase tracking-wider">Players may NOT be eliminated inside:</p>
+              <ul className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm list-disc pl-5 font-medium">
+                <li>Academic buildings</li>
+                <li>Classrooms</li>
+                <li>Residence halls</li>
+                <li>Dorm rooms</li>
+                <li>Bathrooms</li>
+                <li>Library</li>
+                <li>Medical appts</li>
+                <li>Vehicles</li>
+              </ul>
+            </div>
+            <p className="text-xs mt-6 p-4 bg-black/40 rounded-2xl border border-white/10 text-white/50 text-center font-bold">Outdoor campus spaces remain active!</p>
           </div>
         </div>
 
-        <div className="night-glass-card-subtle p-6 sm:p-8 rounded-[32px] border-purple-400/25 shadow-xl">
-          <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2"><AlertCircle className="text-red-500"/> Code of Conduct</h3>
+        <div className="black-glass-card-subtle p-6 sm:p-8 rounded-[32px] shadow-xl">
+          <h3 className="text-xl font-bold text-white mb-6 flex items-center gap-2"><AlertCircle className="text-white/50"/> Code of Conduct</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
             <div>
-              <h4 className="font-bold text-red-400 mb-3 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500"></span> Respect Rule</h4>
-              <ul className="list-disc pl-5 space-y-2 text-slate-400 leading-relaxed">
+              <h4 className="font-bold text-white mb-3 uppercase tracking-widest text-xs">Respect Rule</h4>
+              <ul className="list-disc pl-5 space-y-2 text-white/60 font-medium">
                 <li>No physical contact.</li>
                 <li>Do not block entrances/exits.</li>
                 <li>Do not follow into restricted areas.</li>
                 <li>No harassment or intimidation.</li>
-                <li>Must obey staff stop requests immediately.</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-bold text-red-400 mb-3 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-red-500"></span> No Camping</h4>
-              <p className="text-slate-400 leading-relaxed">Players may not wait outside residence halls, classroom exits, or workplaces for more than 10 consecutive minutes to eliminate a player.</p>
+              <h4 className="font-bold text-white mb-3 uppercase tracking-widest text-xs">No Camping</h4>
+              <p className="text-white/60 leading-relaxed font-medium">Players may not wait outside residence halls, classroom exits, or workplaces for more than 10 consecutive minutes to eliminate a player.</p>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
-           <div className="bg-gradient-to-br from-yellow-500/10 to-transparent backdrop-blur-xl p-6 sm:p-8 rounded-[32px] border border-yellow-500/20 shadow-xl h-full flex flex-col">
-            <h3 className="text-xl font-bold text-white mb-3 flex items-center gap-2"><Star className="text-yellow-400 text-yellow-400" fill="currentColor"/> Golden Dart</h3>
-            <p className="text-sm mb-4 text-yellow-200/70 leading-relaxed">Somewhere on campus... A player who finds it gets:</p>
-            <ul className="space-y-3 text-sm text-slate-300 leading-relaxed flex-1">
-              <li className="flex items-start gap-3"><div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"/> <strong>If alive:</strong> Gain one Bonus Life (revive yourself once, or revive another).</li>
-              <li className="flex items-start gap-3"><div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-yellow-500 shrink-0"/> <strong>If eliminated:</strong> Immediately revive and re-enter. Target assigned next morning.</li>
-            </ul>
-            <div className="mt-6 p-3 bg-yellow-500/20 rounded-xl text-center border border-yellow-500/30">
-                <p className="text-xs text-yellow-400 font-bold uppercase tracking-wider">Claimable once per cabbie</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+           <div className="bg-white text-black p-6 sm:p-8 rounded-[32px] shadow-xl h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-black text-black mb-4 flex items-center gap-2"><Star size={24} fill="currentColor"/> Golden Dart</h3>
+              <p className="text-sm mb-4 text-black/60 font-bold">Somewhere on campus... A player who finds it gets:</p>
+              <ul className="space-y-3 text-sm text-black/80 font-medium">
+                <li className="flex items-start gap-2"><div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-black shrink-0"/> Gain one Bonus Life (revive yourself or another).</li>
+                <li className="flex items-start gap-2"><div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-black shrink-0"/> Immediately re-enter the hunt with a new assigned target.</li>
+              </ul>
             </div>
           </div>
 
-          <div className="night-glass-card-subtle p-6 sm:p-8 rounded-[32px] border-purple-400/25 shadow-xl h-full flex flex-col">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2"><Clock className="text-green-400"/> Activity & Hours</h3>
-            <ul className="list-disc pl-5 space-y-3 text-sm leading-relaxed flex-1">
-              <li><strong>Active Hours:</strong> 8:00 AM – 11:00 PM daily.</li>
-              <li><strong>Activity Requirement:</strong> Must eliminate someone within 24 hours of receiving current target, or be eliminated.</li>
-              <li>Staff may become active participants to keep game moving.</li>
-            </ul>
+          <div className="black-glass-card-subtle p-6 sm:p-8 rounded-[32px] shadow-xl h-full flex flex-col justify-between">
+            <div>
+              <h3 className="text-xl font-bold text-white mb-5 flex items-center gap-2"><Clock className="text-white/50"/> Activity & Hours</h3>
+              <ul className="list-disc pl-5 space-y-4 text-sm font-medium leading-relaxed">
+                <li><strong className="text-white">Active Hours:</strong> 8:00 AM – 11:00 PM daily.</li>
+                <li><strong className="text-white">Activity Requirement:</strong> Must eliminate someone within 24 hours of receiving current target, or be automatically eliminated.</li>
+              </ul>
+            </div>
           </div>
         </div>
       </div>
@@ -789,394 +774,312 @@
       const sortedPlayers = [...players].sort((a, b) => b.eliminations - a.eliminations);
 
       return (
-        <div className="space-y-10 pb-8">
+        <div className="space-y-8 sm:space-y-12 pb-8 max-w-5xl mx-auto">
           <div>
-            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3"><Trophy className="text-yellow-500" size={28} /> Team Standings</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-stretch">
+            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3 tracking-tight"><Trophy className="text-white" size={28} /> Team Standings</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
               {sortedHouses.map((house, idx) => (
-                <div key={house.id} className="night-glass-card-subtle border-purple-400/25 shadow-xl rounded-[32px] p-6 relative overflow-hidden group hover:bg-slate-800/50 transition-colors h-full flex flex-col justify-between">
-                  <div className="absolute -right-4 -top-4 text-white/5 group-hover:text-white/10 transition-colors duration-500 pointer-events-none">
-                    <Trophy size={100} />
-                  </div>
-                  <div className="relative z-10">
-                    <div className="inline-block px-3 py-1.5 bg-slate-900/60 rounded-lg text-purple-200 font-bold text-xs mb-4 tracking-widest uppercase shadow-inner">Rank #{idx + 1}</div>
-                    <div className="text-2xl font-black text-white mb-1 break-words">{house.name}</div>
-                  </div>
-                  <div className="text-4xl font-black text-white drop-shadow-md mt-4 relative z-10">{house.points} <span className="text-sm font-normal text-slate-400">pts</span></div>
+                <div key={house.id} className="black-glass-card-subtle p-4 sm:p-6 rounded-[24px] sm:rounded-[32px] flex flex-col items-center text-center">
+                  <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-1">Rank #{idx + 1}</div>
+                  <div className="text-sm sm:text-lg font-black text-white mb-3 truncate w-full">{house.name}</div>
+                  <div className="text-3xl sm:text-4xl font-black text-white leading-none">{house.points}</div>
+                  <div className="text-[10px] text-white/40 mt-1 uppercase font-bold">PTS</div>
                 </div>
               ))}
             </div>
           </div>
 
           <div>
-            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3"><Users className="text-blue-400" size={28} /> Top Hunters</h2>
-            <div className="flex flex-col gap-4">
+            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3 tracking-tight"><Users className="text-white" size={28} /> Top Hunters</h2>
+            
+            {/* Desktop Table */}
+            <div className="hidden md:block black-glass-card-subtle rounded-[32px] overflow-hidden shadow-xl">
+              <table className="w-full text-left text-sm text-white/80">
+                <thead className="bg-white/5 text-[10px] uppercase text-white/50 font-bold tracking-widest border-b border-white/10">
+                  <tr>
+                    <th className="px-8 py-5">Hunter</th>
+                    <th className="px-8 py-5">Team</th>
+                    <th className="px-8 py-5 text-center">Status</th>
+                    <th className="px-8 py-5 text-right">Tags</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-white/10 font-medium">
+                  {sortedPlayers.slice(0, 10).map((player, idx) => (
+                    <tr key={player.id} className="hover:bg-white/5 transition-colors">
+                      <td className="px-8 py-5 text-white flex items-center gap-4">
+                        <span className="text-white/30 text-xs font-bold w-4">{idx + 1}</span>
+                        <PlayerAvatar player={player} size={36} />
+                        <span className="text-base font-bold">{player.name}</span>
+                      </td>
+                      <td className="px-8 py-5 text-white/60">{player.house}</td>
+                      <td className="px-8 py-5 text-center">
+                        {player.status === 'alive' ? (
+                          <span className="bg-emerald-500/10 text-emerald-400 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Alive</span>
+                        ) : (
+                          <span className="bg-red-500/10 text-red-400 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">Eliminated</span>
+                        )}
+                      </td>
+                      <td className="px-8 py-5 text-right font-black text-white text-xl">{player.eliminations}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Mobile Stacked Cards */}
+            <div className="md:hidden space-y-3">
               {sortedPlayers.slice(0, 10).map((player, idx) => (
-                <div key={player.id} className="night-glass-card-subtle border-purple-400/25 rounded-[32px] p-4 sm:p-5 flex items-center justify-between gap-4 hover:bg-slate-800/50 transition-colors shadow-xl">
-                  <div className="flex items-center gap-4 min-w-0">
-                    <span className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-slate-900/60 text-purple-200 text-xs sm:text-sm font-black shadow-inner shrink-0">{idx + 1}</span>
-                    <PlayerAvatar player={player} size={48} />
-                    <div className="min-w-0">
-                      <div className="font-bold text-white text-base sm:text-lg truncate flex items-center gap-2">
-                        {player.name}
-                        {player.status === 'eliminated' && <AlertCircle size={14} className="text-rose-400 shrink-0" />}
-                      </div>
-                      <div className="text-sm text-purple-300/70 truncate">Team {player.house}</div>
-                    </div>
+                <div key={player.id} className="black-glass-card-subtle p-4 rounded-[24px] flex items-center gap-4">
+                  <div className="text-white/30 text-[10px] font-black w-3 text-center">{idx + 1}</div>
+                  <PlayerAvatar player={player} size={48} />
+                  <div className="flex-1 min-w-0">
+                    <h4 className="text-sm font-black text-white truncate">{player.name}</h4>
+                    <div className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-0.5">{player.house}</div>
                   </div>
-                  <div className="text-right shrink-0">
-                    <div className="text-3xl sm:text-4xl font-black text-white drop-shadow-md leading-none">{player.eliminations}</div>
-                    <div className="text-[10px] sm:text-xs text-purple-200/50 uppercase font-bold tracking-widest mt-1">Tags</div>
+                  <div className="text-right">
+                    <div className="text-2xl font-black text-white leading-none">{player.eliminations}</div>
                   </div>
                 </div>
               ))}
-              {sortedPlayers.length === 0 && (
-                <div className="night-glass-card-subtle border-purple-400/25 rounded-[32px] p-12 text-center text-slate-500 leading-relaxed shadow-xl">
-                  No players registered yet.<br/>The hunt begins soon!
-                </div>
-              )}
             </div>
           </div>
         </div>
       );
     };
 
-    const AdminView = ({ players, houses, gameActive, onLoadRoster, onSyncRoster, onStartGame, onEndGame, onResetGame, onGoldenDart, onRemoveGoldenDart, onPhotoUpload, onUpdateTarget, onRevivePlayer, onRemovePlayer }) => {
-      const [rosterText, setRosterText] = useState("");
-      const [message, setMessage] = useState("");
-      const [busy, setBusy] = useState(false);
+    const AdminView = ({ players, houses, gameActive, onLoadRoster, onSyncRoster, onStartGame, onEndGame, onResetGame, onGoldenDart, onRemoveGoldenDart, onPhotoUpload, onUpdateTarget, onRevivePlayer, onRemovePlayer, onSweepExpired }) => {
       const [syncing, setSyncing] = useState(false);
-      const [showManual, setShowManual] = useState(false);
-      const [uploadingId, setUploadingId] = useState(null);
       const [isResetModalOpen, setIsResetModalOpen] = useState(false);
       const [managingPlayerId, setManagingPlayerId] = useState(null);
       const [isDeletingPlayer, setIsDeletingPlayer] = useState(false);
+      const [isSweeping, setIsSweeping] = useState(false);
+      const [autoSweep, setAutoSweep] = useState(false);
 
       const managingPlayer = useMemo(() => players.find(p => p.id === managingPlayerId), [players, managingPlayerId]);
 
-      const closeManageModal = () => {
-        setManagingPlayerId(null);
-        setIsDeletingPlayer(false);
-      };
+      // Auto-Sweeper Engine
+      useEffect(() => {
+        if (!gameActive || !players.length || !autoSweep) return;
+        const interval = setInterval(() => {
+            const now = new Date();
+            const hasExpired = players.some(p => {
+                if (p.status !== 'alive' || !p.targetAssignedAt) return false;
+                return (now - new Date(p.targetAssignedAt)) > 24 * 60 * 60 * 1000;
+            });
+            if (hasExpired && !isSweeping) onSweepExpired();
+        }, 30000); // Check every 30 seconds
+        return () => clearInterval(interval);
+      }, [gameActive, players, isSweeping, autoSweep, onSweepExpired]);
 
       const handleSyncRoster = async () => {
         setSyncing(true);
-        setMessage("");
-        const result = await onSyncRoster();
+        await onSyncRoster();
         setSyncing(false);
-        setMessage(result.success
-          ? `Synced ${result.count} players from the ${result.activeYear} timesheet roster across ${result.houseCount} teams.`
-          : `Sync failed: ${result.message}`);
-      };
-
-      const handleParseRoster = async () => {
-        if (!rosterText.trim()) return;
-
-        const lines = rosterText.split('\n');
-        const newPlayers = [];
-        const discoveredHouses = new Set();
-
-        lines.forEach((line) => {
-          if (!line.trim()) return;
-          const parts = line.split(',');
-          if (parts.length >= 3) {
-            const studentId = parts[0].trim();
-            const name = parts[1].trim();
-            const houseName = parts[2].trim();
-            discoveredHouses.add(houseName);
-
-            newPlayers.push({
-              studentId,
-              name,
-              house: houseName,
-              status: 'alive',
-              eliminations: 0,
-              hasGoldenDart: false
-            });
-          }
-        });
-
-        if (newPlayers.length > 0) {
-          setBusy(true);
-          await onLoadRoster(newPlayers, Array.from(discoveredHouses));
-          setBusy(false);
-          setMessage(`Successfully loaded ${newPlayers.length} players across ${discoveredHouses.size} teams.`);
-        } else {
-          setMessage("Failed to parse roster. Please ensure 'Student ID, Name, Team' format.");
-        }
       };
 
       const handlePhotoChange = async (playerId, file) => {
-        if (!file) return;
-        setUploadingId(playerId);
-        const result = await onPhotoUpload(playerId, file);
-        setUploadingId(null);
-        setMessage(result.success ? 'Photo uploaded.' : `Photo upload failed: ${result.message}`);
+        if (file) await onPhotoUpload(playerId, file);
       };
 
       return (
-        <div className="space-y-8 pb-12">
-          {/* Game Operations Panel */}
-          <div className="night-glass-card p-6 sm:p-8 rounded-[32px] border-purple-400/40 shadow-2xl">
-            <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3"><Settings className="text-purple-300"/> Game Setup & Operations</h2>
+        <div className="space-y-6 sm:space-y-8 pb-12 max-w-6xl mx-auto">
+          
+          {/* Operations Panel */}
+          <div className="black-glass-card p-6 sm:p-10 rounded-[32px] sm:rounded-[40px] shadow-2xl">
+            <h2 className="text-2xl font-black text-white mb-6 sm:mb-8 tracking-tight flex items-center gap-3"><Settings/> Game Operations</h2>
             <div className="space-y-6">
-
-              {/* Manage Player Modal */}
-              <Modal isOpen={!!managingPlayerId} onClose={closeManageModal} title={`Manage: ${managingPlayer?.name}`}>
-                {managingPlayer && !isDeletingPlayer && (
-                  <div className="space-y-6">
-                    {/* Status Actions */}
-                    <div className="flex gap-3">
-                      {managingPlayer.status === 'eliminated' && (
-                        <Button variant="primary" className="flex-1 !bg-emerald-600 hover:!bg-emerald-500 !shadow-[0_10px_25px_rgba(5,150,105,0.4)]" onClick={() => onRevivePlayer(managingPlayer.id)}>
-                          Revive Player
-                        </Button>
-                      )}
-                      <Button variant="outline" className="flex-1" onClick={() => managingPlayer.hasGoldenDart ? onRemoveGoldenDart(managingPlayer.id) : onGoldenDart(managingPlayer.id)}>
-                        {managingPlayer.hasGoldenDart ? 'Remove Dart' : 'Give Golden Dart'}
-                      </Button>
-                    </div>
-
-                    {/* Target Assignment */}
-                    {managingPlayer.status === 'alive' && (
-                      <div className="bg-slate-900/50 border border-white/10 p-5 rounded-[24px]">
-                        <label className="block text-sm font-bold text-slate-300 mb-3 flex items-center gap-2"><Target size={16}/> Override Target</label>
-                        <select
-                          value={managingPlayer.targetId || ""}
-                          onChange={(e) => {
-                            const val = e.target.value;
-                            if (!val) onUpdateTarget(managingPlayer.id, null);
-                            else {
-                              const tPlayer = players.find(p => p.id.toString() === val);
-                              if (tPlayer) onUpdateTarget(managingPlayer.id, tPlayer.id);
-                            }
-                          }}
-                          className="control-input !bg-[#0f172a] !text-white !border-white/20 appearance-none cursor-pointer text-sm"
-                        >
-                          <option value="">No Target Assigned</option>
-                          {players.filter(p => p.status === 'alive' && p.id !== managingPlayer.id).map(p => (
-                            <option key={p.id} value={p.id}>{p.name} - Team {p.house}</option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-
-                    {/* Danger Zone */}
-                    <div className="pt-5 border-t border-rose-500/20">
-                      <Button variant="danger" className="w-full" onClick={() => setIsDeletingPlayer(true)}>
-                         Remove Player Permanently
-                      </Button>
-                    </div>
-                  </div>
-                )}
-
-                {managingPlayer && isDeletingPlayer && (
-                  <div className="space-y-6">
-                    <div className="bg-rose-500/10 border border-rose-500/20 p-5 rounded-[24px] flex gap-4 shadow-sm">
-                      <AlertCircle className="text-rose-400 shrink-0 mt-0.5" />
-                      <p className="text-sm sm:text-base text-rose-200 leading-relaxed">
-                        Are you sure you want to permanently remove <strong>{managingPlayer.name}</strong>? If someone is targeting them, their target will be updated to this player's target to maintain the chain.
-                      </p>
-                    </div>
-                    <div className="flex gap-3 pt-2">
-                      <Button variant="secondary" className="flex-1" onClick={() => setIsDeletingPlayer(false)}>Cancel</Button>
-                      <Button variant="danger" className="flex-1" onClick={() => {
-                         onRemovePlayer(managingPlayer.id);
-                         closeManageModal();
-                      }}>Yes, Remove</Button>
-                    </div>
-                  </div>
-                )}
-              </Modal>
-
+              
               {/* Reset Game Modal */}
               <Modal isOpen={isResetModalOpen} onClose={() => setIsResetModalOpen(false)} title="CRITICAL: Factory Reset Game">
-                <div className="space-y-5">
-                  <div className="bg-rose-500/10 border border-rose-500/20 p-5 rounded-2xl flex gap-4">
-                    <AlertCircle className="text-rose-400 shrink-0 mt-0.5" />
-                    <p className="text-sm text-rose-200 leading-relaxed">
+                <div className="space-y-6">
+                  <div className="bg-red-500/10 border border-red-500/20 p-5 rounded-2xl flex gap-4">
+                    <AlertCircle className="text-red-500 shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-200/80 font-medium leading-relaxed">
                       Are you absolutely sure you want to completely reset the game? This action will wipe all eliminations, remove current targets, revive all players, and reset house points to zero. This action cannot be undone.
                     </p>
                   </div>
-                  <div className="flex gap-3 pt-4">
+                  <div className="flex gap-3 pt-2">
                     <Button variant="secondary" className="flex-1" onClick={() => setIsResetModalOpen(false)}>Cancel</Button>
-                    <Button variant="danger" className="flex-1" onClick={() => {
-                      onResetGame();
-                      setIsResetModalOpen(false);
-                      setMessage("Game has been fully factory reset.");
-                    }}>Yes, Reset Game</Button>
+                    <Button variant="danger" className="flex-1" onClick={() => { onResetGame(); setIsResetModalOpen(false); }}>Yes, Reset Game</Button>
                   </div>
                 </div>
               </Modal>
 
               {/* Game Lifecycle Controls */}
-              <div className="night-glass-card-subtle p-6 rounded-[28px] border-purple-400/25">
-                <h3 className="text-sm font-bold text-purple-200/70 uppercase tracking-widest mb-4">Game Lifecycle Controls</h3>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <Button
-                    variant={gameActive ? "secondary" : "primary"}
-                    onClick={onStartGame}
-                    disabled={players.length < 2 || gameActive}
-                    className="shadow-none"
-                  >
-                    {gameActive ? 'Game is Active' : 'Start Game'}
+              <div className="black-glass-card-subtle p-5 sm:p-6 rounded-[28px] sm:rounded-[32px]">
+                <h3 className="text-[10px] sm:text-xs font-bold text-white/40 uppercase tracking-widest mb-4">Lifecycle Controls</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  <Button variant={gameActive ? "secondary" : "primary"} onClick={onStartGame} disabled={players.length < 2 || gameActive}>
+                    {gameActive ? 'Game is Active' : 'Start Game (Assign Targets)'}
                   </Button>
+                  <Button variant="outline" onClick={onEndGame} disabled={!gameActive}>Pause / End Game</Button>
+                  
+                  <div className="md:col-span-2 mt-4 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div>
+                      <h4 className="text-sm font-bold text-white flex items-center gap-2"><Clock size={16}/> Auto-Sweep Engine: {autoSweep ? <span className="text-emerald-400">ON</span> : <span className="text-white/40">OFF</span>}</h4>
+                      <p className="text-xs text-white/50 mt-1 max-w-sm">Automatically scans and eliminates expired players every 30s while ON. Re-stitches hunters fairly.</p>
+                    </div>
+                    <Button variant={autoSweep ? "primary" : "secondary"} onClick={() => setAutoSweep(!autoSweep)} className="w-full sm:w-auto">
+                      {autoSweep ? 'Disable Auto-Sweep' : 'Enable Auto-Sweep'}
+                    </Button>
+                  </div>
 
-                  <Button
-                    variant="outline"
-                    onClick={onEndGame}
-                    disabled={!gameActive}
-                    className="shadow-none"
-                  >
-                    Pause / End Game
-                  </Button>
-
-                  <Button 
-                    variant="danger" 
-                    onClick={() => setIsResetModalOpen(true)} 
-                    className="shadow-none"
-                  >
-                    Factory Reset
-                  </Button>
+                  <div className="md:col-span-2 mt-4 pt-4 border-t border-white/10 flex justify-end">
+                    <button onClick={() => setIsResetModalOpen(true)} className="text-xs font-bold text-red-500 hover:text-red-400 uppercase tracking-widest transition-colors py-2 px-4 rounded-full hover:bg-red-500/10">Factory Reset</button>
+                  </div>
                 </div>
               </div>
 
               {/* Roster Sync */}
-              <div className="bg-blue-500/10 border border-blue-500/20 p-6 rounded-[28px] flex flex-col sm:flex-row items-center justify-between gap-6">
+              <div className="bg-white/5 border border-white/10 p-5 sm:p-6 rounded-[28px] sm:rounded-[32px] flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                  <h3 className="text-white font-bold flex items-center gap-2"><RefreshCw size={18} className="text-blue-400"/> Sync from Timesheet Roster</h3>
-                  <p className="text-sm text-slate-400 mt-2 leading-relaxed max-w-xl">Pulls the active year's roster (Student ID, name, team) straight from the timesheet database — no manual upload needed.</p>
+                  <h3 className="text-white font-bold text-sm sm:text-base">Sync from Timesheet Roster</h3>
+                  <p className="text-xs sm:text-sm text-white/50 mt-1 font-medium">Pulls the active year's roster (Student ID, name, team) directly from database.</p>
                 </div>
-                <Button variant="primary" onClick={handleSyncRoster} disabled={syncing} className="w-full sm:w-auto whitespace-nowrap px-8">
+                <Button variant="secondary" onClick={handleSyncRoster} disabled={syncing} className="w-full sm:w-auto">
                   {syncing ? 'Syncing...' : 'Sync Roster'}
                 </Button>
               </div>
-
-              <button onClick={() => setShowManual(s => !s)} className="text-xs font-bold text-purple-300/60 hover:text-purple-200 uppercase tracking-widest transition-colors block ml-2">
-                {showManual ? 'Hide manual override' : 'Need to add someone manually? →'}
-              </button>
-
-              {showManual && (
-                <div className="animate-in slide-in-from-top-4 duration-300">
-                  <label className="block text-sm font-bold text-purple-200/70 mb-3 ml-2">Manual Roster Override (Format: Student ID, Name, Team per line)</label>
-                  <textarea
-                    value={rosterText}
-                    onChange={(e) => setRosterText(e.target.value)}
-                    placeholder="10234567, John Doe, Gryffindor&#10;10298765, Jane Smith, Slytherin"
-                    className="control-input !rounded-[24px] h-40 font-mono text-sm shadow-inner resize-none p-5"
-                  ></textarea>
-                  <p className="text-xs text-slate-500 mt-3 ml-2">This replaces the entire roster — use it only for players outside the timesheet roster.</p>
-                  <Button variant="secondary" onClick={handleParseRoster} disabled={busy} className="w-full mt-4">
-                    {busy ? 'Loading...' : 'Load Manual Roster'}
-                  </Button>
-                </div>
-              )}
-
-              {message && <div className="p-5 bg-purple-500/10 text-purple-200 rounded-[20px] border border-purple-500/20 text-sm font-bold text-center animate-in fade-in">{message}</div>}
             </div>
           </div>
 
           {/* Active Roster List */}
           {players.length > 0 && (
-            <div className="space-y-6">
-              <h2 className="text-2xl font-black text-white px-2">Active Roster</h2>
+            <div className="black-glass-card rounded-[32px] sm:rounded-[40px] shadow-2xl overflow-hidden pb-4">
+              <div className="p-6 sm:p-10 pb-4 border-b border-white/5">
+                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">Player Management</h2>
+              </div>
               
-              {/* Desktop Table View */}
-              <div className="hidden md:block night-glass-card p-6 sm:p-8 rounded-[32px] border-purple-400/40 shadow-2xl overflow-hidden">
-                <div className="overflow-x-auto no-scrollbar">
-                  <table className="w-full text-left text-sm text-slate-300 min-w-[850px]">
-                    <thead className="bg-slate-900/50 text-purple-200/70 uppercase text-xs tracking-wider">
-                      <tr>
-                        <th className="p-4 rounded-tl-[16px]">Photo</th>
-                        <th className="p-4">Student ID</th>
-                        <th className="p-4">Name</th>
-                        <th className="p-4">Team</th>
-                        <th className="p-4">Target</th>
-                        <th className="p-4">Status</th>
-                        <th className="p-4 text-right rounded-tr-[16px]">Admin Actions</th>
+              {/* Desktop Table */}
+              <div className="hidden md:block overflow-x-auto no-scrollbar">
+                 <table className="w-full text-left text-sm text-white/80">
+                  <thead className="bg-white/5 text-white/40 uppercase text-[10px] tracking-widest border-b border-white/5">
+                    <tr>
+                      <th className="p-5 pl-8">Photo</th>
+                      <th className="p-5">Name</th>
+                      <th className="p-5">Target</th>
+                      <th className="p-5">Status</th>
+                      <th className="p-5 text-right pr-8">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 font-medium">
+                    {players.map(p => (
+                      <tr key={p.id} className="hover:bg-white/5 transition-colors">
+                        <td className="p-4 pl-8">
+                          <label className="cursor-pointer inline-flex items-center gap-3 group relative">
+                            <PlayerAvatar player={p} size={44} />
+                            <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Upload size={16} className="text-white" />
+                            </div>
+                            <input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoChange(p.id, e.target.files[0])} />
+                          </label>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-bold text-white">{p.name} {p.hasGoldenDart && <span className="ml-2 text-white" title="Has Golden Dart">★</span>}</div>
+                          <div className="text-[10px] text-white/40 mt-1">{p.studentId} • {p.house}</div>
+                        </td>
+                        <td className="p-4 text-white/50">{players.find(t => t.id === p.targetId)?.name || 'None'}</td>
+                        <td className="p-4">
+                          {p.status === 'alive' ? <span className="text-emerald-400 text-[10px] font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full uppercase tracking-wider">ALIVE</span> : <span className="text-red-400 text-[10px] font-bold bg-red-500/10 px-3 py-1.5 rounded-full uppercase tracking-wider">ELIMINATED</span>}
+                        </td>
+                        <td className="p-4 text-right pr-8">
+                          <Button variant="secondary" className="!py-2 !px-4 text-xs inline-flex" onClick={() => setManagingPlayerId(p.id)}>Manage</Button>
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody className="divide-y divide-purple-500/10">
-                      {players.map(p => (
-                        <tr key={p.id} className="hover:bg-white/5 transition-colors">
-                          <td className="p-4">
-                            <label className="cursor-pointer inline-flex items-center gap-3 group">
-                              <PlayerAvatar player={p} size={40} />
-                              <span className="text-slate-500 group-hover:text-purple-300 transition-colors">
-                                {uploadingId === p.id ? <span className="text-xs">...</span> : <Upload size={16} />}
-                              </span>
-                              <input
-                                type="file"
-                                accept="image/*"
-                                className="hidden"
-                                disabled={uploadingId === p.id}
-                                onChange={(e) => handlePhotoChange(p.id, e.target.files[0])}
-                              />
-                            </label>
-                          </td>
-                          <td className="p-4 font-mono text-slate-400 whitespace-nowrap">{p.studentId || '—'}</td>
-                          <td className="p-4 font-bold text-white max-w-[180px] truncate">{p.name} {p.hasGoldenDart && <span className="ml-2 text-yellow-500" title="Has Golden Dart">★</span>}</td>
-                          <td className="p-4 whitespace-nowrap">{p.house}</td>
-                          <td className="p-4 font-medium text-purple-300/80 max-w-[150px] truncate">{players.find(t => t.id === p.targetId)?.name || 'Unassigned'}</td>
-                          <td className="p-4">
-                            {p.status === 'alive' ? <span className="text-emerald-400 text-xs font-bold bg-emerald-500/10 px-3 py-1.5 rounded-full">ALIVE</span> : <span className="text-rose-400 text-xs font-bold bg-rose-500/10 px-3 py-1.5 rounded-full">ELIMINATED</span>}
-                          </td>
-                          <td className="p-4 text-right whitespace-nowrap">
-                            <button onClick={() => setManagingPlayerId(p.id)} className="text-xs bg-purple-500/10 text-purple-300 border border-purple-500/30 px-4 py-2 rounded-full hover:bg-purple-500/20 transition-colors font-bold uppercase tracking-wider flex items-center gap-1.5 ml-auto">
-                              <UserCog size={14} /> Manage
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
 
-              {/* Mobile Card View */}
-              <div className="flex md:hidden flex-col gap-4">
+              {/* Mobile Stacked List */}
+              <div className="md:hidden divide-y divide-white/5">
                 {players.map(p => (
-                  <div key={p.id} className="night-glass-card-subtle p-5 rounded-[32px] border-purple-400/30 shadow-xl space-y-4">
-                    <div className="flex items-center gap-4">
-                      <label className="cursor-pointer relative group shrink-0">
-                        <PlayerAvatar player={p} size={64} />
-                        <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                          {uploadingId === p.id ? <RefreshCw size={20} className="text-white animate-spin" /> : <Upload size={20} className="text-white" />}
-                        </div>
-                        <input
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          disabled={uploadingId === p.id}
-                          onChange={(e) => handlePhotoChange(p.id, e.target.files[0])}
-                        />
-                      </label>
-                      <div className="min-w-0 flex-1">
-                        <div className="font-bold text-white text-lg truncate">{p.name} {p.hasGoldenDart && <span className="text-yellow-500 ml-1">★</span>}</div>
-                        <div className="text-sm font-mono text-purple-300/70">{p.studentId || 'No ID'}</div>
-                        <div className="text-sm font-bold text-slate-300 mt-0.5">Team {p.house}</div>
-                      </div>
+                  <div key={p.id} className="p-4 flex items-center justify-between gap-3">
+                    <label className="cursor-pointer relative shrink-0">
+                      <PlayerAvatar player={p} size={48} />
+                      <input type="file" accept="image/*" className="hidden" onChange={(e) => handlePhotoChange(p.id, e.target.files[0])} />
+                    </label>
+                    <div className="flex-1 min-w-0">
+                       <div className="font-bold text-white text-sm truncate">{p.name} {p.hasGoldenDart && <span>★</span>}</div>
+                       <div className="text-[10px] text-white/50 mt-0.5 truncate">Target: {players.find(t => t.id === p.targetId)?.name || 'None'}</div>
                     </div>
-                    
-                    <div className="bg-slate-900/60 rounded-[24px] p-4 border border-white/5 text-sm space-y-3">
-                       <div className="flex justify-between items-center">
-                         <span className="text-slate-400 font-bold">Status</span>
-                         {p.status === 'alive' ? <span className="text-emerald-400 font-bold bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Alive</span> : <span className="text-rose-400 font-bold bg-rose-500/10 border border-rose-500/20 px-3 py-1 rounded-full text-[10px] tracking-widest uppercase">Eliminated</span>}
-                       </div>
-                       <div className="flex justify-between items-center">
-                         <span className="text-slate-400 font-bold">Target</span>
-                         <span className="font-medium text-white truncate max-w-[150px]">{players.find(t => t.id === p.targetId)?.name || 'None'}</span>
-                       </div>
-                    </div>
-
-                    <Button onClick={() => setManagingPlayerId(p.id)} variant="outline" className="w-full !py-3">
-                      <UserCog size={16} /> Manage Player
-                    </Button>
+                    <Button variant="secondary" className="!py-2 !px-3 text-[10px] shrink-0" onClick={() => setManagingPlayerId(p.id)}>Manage</Button>
                   </div>
                 ))}
               </div>
             </div>
           )}
+
+          {/* Manage Player Modal */}
+          <Modal isOpen={!!managingPlayerId} onClose={() => { setManagingPlayerId(null); setIsDeletingPlayer(false); }} title={`Manage: ${managingPlayer?.name}`}>
+            {managingPlayer && (
+              <div className="space-y-6">
+                <div className="flex items-center gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
+                  <PlayerAvatar player={managingPlayer} size={56} />
+                  <div>
+                    <div className="font-bold text-white">{managingPlayer.name}</div>
+                    <div className="text-xs text-white/50">{managingPlayer.house} • {managingPlayer.status.toUpperCase()}</div>
+                  </div>
+                </div>
+
+                {isDeletingPlayer ? (
+                  <div className="bg-red-500/10 border border-red-500/20 p-5 rounded-3xl space-y-4">
+                    <p className="text-sm text-red-200/80 font-medium">Permanently remove this player? Their target will be seamlessly passed to whoever is hunting them to maintain the chain.</p>
+                    <div className="flex gap-2">
+                      <Button variant="secondary" className="flex-1 !py-3" onClick={() => setIsDeletingPlayer(false)}>Cancel</Button>
+                      <Button variant="danger" className="flex-1 !py-3" onClick={() => { onRemovePlayer(managingPlayer.id); setManagingPlayerId(null); setIsDeletingPlayer(false); }}>Remove</Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <label className="text-xs font-bold text-white/40 uppercase tracking-widest ml-1">Override Target</label>
+                      <select 
+                        className="control-input !rounded-2xl appearance-none"
+                        value={managingPlayer.targetId || ""}
+                        onChange={(e) => onUpdateTarget(managingPlayer.id, e.target.value)}
+                      >
+                        <option value="">-- No Target --</option>
+                        {players.filter(p => p.id !== managingPlayer.id).map(p => (
+                          <option key={p.id} value={p.id}>{p.name} ({p.status})</option>
+                        ))}
+                      </select>
+                      <p className="text-[10px] text-white/30 ml-1">Note: This resets their 24h timer automatically.</p>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
+                      {managingPlayer.status === 'eliminated' ? (
+                        <Button variant="secondary" className="!py-3 text-xs" onClick={() => { onRevivePlayer(managingPlayer.id); setManagingPlayerId(null); }}>
+                          <HeartPulse size={14}/> Revive Player
+                        </Button>
+                      ) : (
+                        <Button variant="secondary" className="!py-3 text-xs opacity-50 cursor-not-allowed">
+                          Already Alive
+                        </Button>
+                      )}
+
+                      {managingPlayer.hasGoldenDart ? (
+                        <Button variant="secondary" className="!py-3 text-xs" onClick={() => onRemoveGoldenDart(managingPlayer.id)}>
+                          <Trash2 size={14}/> Remove Dart
+                        </Button>
+                      ) : (
+                        <Button variant="secondary" className="!py-3 text-xs" onClick={() => onGoldenDart(managingPlayer.id)}>
+                          <Star size={14}/> Give Dart
+                        </Button>
+                      )}
+                    </div>
+
+                    <div className="pt-2">
+                      <Button variant="secondary" className="w-full !py-3 text-xs !text-red-400 hover:!bg-red-500/10 border-red-500/20" onClick={() => setIsDeletingPlayer(true)}>
+                        <UserMinus size={14}/> Permanently Remove
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </Modal>
+
         </div>
       );
     };
@@ -1193,7 +1096,6 @@
 
       useEffect(() => {
         let cancelled = false;
-
         const loadAll = async () => {
           const [h, p, g] = await Promise.all([fetchHouses(), fetchPlayers(), fetchGameActive()]);
           if (cancelled) return;
@@ -1201,22 +1103,9 @@
           setPlayers(p);
           setGameActive(g);
         };
-        
-        // Initial load
         loadAll();
-
-        // WebSockets are restricted in this preview environment, 
-        // so we use HTTP polling (every 5 seconds) as a fallback for realtime updates.
-        const pollInterval = setInterval(() => {
-          if (!cancelled) {
-            loadAll();
-          }
-        }, 5000);
-
-        return () => {
-          cancelled = true;
-          clearInterval(pollInterval);
-        };
+        const pollInterval = setInterval(() => { if (!cancelled) loadAll(); }, 5000);
+        return () => { cancelled = true; clearInterval(pollInterval); };
       }, []);
 
       const handleLoadRoster = async (newPlayers, houseNames) => {
@@ -1224,23 +1113,18 @@
         await supabase.from('houses').delete().neq('id', 0);
         await supabase.from('houses').insert(houseNames.map(name => ({ name, points: 0 })));
         await supabase.from('players').insert(newPlayers.map(p => ({
-          student_id: p.studentId,
-          name: p.name,
-          house: p.house,
-          status: p.status,
-          eliminations: p.eliminations,
-          has_golden_dart: p.hasGoldenDart
+          student_id: p.studentId, name: p.name, house: p.house, status: p.status, eliminations: p.eliminations, has_golden_dart: p.hasGoldenDart
         })));
       };
 
       const handleSyncTimesheetRoster = async () => {
         try {
-          const { activeYear, players: rosterPlayers } = await fetchTimesheetRoster();
+          const { players: rosterPlayers } = await fetchTimesheetRoster();
           const discoveredHouses = Array.from(new Set(rosterPlayers.map(p => p.house)));
           await handleLoadRoster(rosterPlayers, discoveredHouses);
-          return { success: true, count: rosterPlayers.length, houseCount: discoveredHouses.length, activeYear };
+          return { success: true };
         } catch (err) {
-          return { success: false, message: err.message };
+          return { success: false };
         }
       };
 
@@ -1248,237 +1132,174 @@
       const startGame = async () => {
         if (players.length < 2) return;
         const shuffled = [...players].sort(() => Math.random() - 0.5);
+        const now = new Date().toISOString();
+
         await Promise.all(shuffled.map((player, index) =>
           supabase.from('players').update({
-            status: 'alive',
-            target_id: shuffled[(index + 1) % shuffled.length].id,
-            eliminations: 0
+            status: 'alive', target_id: shuffled[(index + 1) % shuffled.length].id, eliminations: 0, target_assigned_at: now
           }).eq('id', player.id)
         ));
         await supabase.from('houses').update({ points: 0 }).neq('id', 0);
         await supabase.from('game_state').update({ active: true }).eq('id', 1);
       };
 
-      const endGame = async () => {
-         await supabase.from('game_state').update({ active: false }).eq('id', 1);
-      };
+      const endGame = async () => await supabase.from('game_state').update({ active: false }).eq('id', 1);
 
       const resetGame = async () => {
         await supabase.from('game_state').update({ active: false }).eq('id', 1);
         await supabase.from('houses').update({ points: 0 }).neq('id', 0);
-        await supabase.from('players').update({
-          status: 'alive',
-          target_id: null,
-          eliminations: 0,
-          has_golden_dart: false
-        }).neq('id', 0);
+        await supabase.from('players').update({ status: 'alive', target_id: null, eliminations: 0, has_golden_dart: false, target_assigned_at: null }).neq('id', 0);
       };
 
       const handleElimination = async (eliminatorId, targetId) => {
         const eliminator = players.find(p => p.id === eliminatorId);
         const target = players.find(p => p.id === targetId);
         if (!eliminator || !target || target.status !== 'alive') return;
+        const now = new Date().toISOString();
 
-        await supabase.from('players').update({
-          target_id: target.targetId,
-          eliminations: eliminator.eliminations + 1
-        }).eq('id', eliminator.id);
-
-        await supabase.from('players').update({
-          status: 'eliminated',
-          target_id: null
-        }).eq('id', target.id);
-
+        await supabase.from('players').update({ target_id: target.targetId, eliminations: eliminator.eliminations + 1, target_assigned_at: now }).eq('id', eliminator.id);
+        await supabase.from('players').update({ status: 'eliminated', target_id: null }).eq('id', target.id);
         const house = houses.find(h => h.name === eliminator.house);
-        if (house) {
-          await supabase.from('houses').update({ points: house.points + 10 }).eq('id', house.id);
-        }
+        if (house) await supabase.from('houses').update({ points: house.points + 10 }).eq('id', house.id);
       };
 
-      const handleGoldenDart = async (playerId) => {
-        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, hasGoldenDart: true } : p));
-        await supabase.from('players').update({ has_golden_dart: true }).eq('id', playerId);
-      };
-
-      const handleRemoveGoldenDart = async (playerId) => {
-        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, hasGoldenDart: false } : p));
-        await supabase.from('players').update({ has_golden_dart: false }).eq('id', playerId);
-      };
+      const handleGoldenDart = async (playerId) => await supabase.from('players').update({ has_golden_dart: true }).eq('id', playerId);
+      const handleRemoveGoldenDart = async (playerId) => await supabase.from('players').update({ has_golden_dart: false }).eq('id', playerId);
 
       const handleUpdateTarget = async (playerId, newTargetId) => {
-        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, targetId: newTargetId } : p));
-        await supabase.from('players').update({ target_id: newTargetId }).eq('id', playerId);
+        const now = new Date().toISOString();
+        await supabase.from('players').update({ target_id: newTargetId, target_assigned_at: now }).eq('id', playerId);
       };
 
-      const handleRevivePlayer = async (playerId) => {
-        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, status: 'alive' } : p));
-        await supabase.from('players').update({ status: 'alive' }).eq('id', playerId);
+      const stitchRevivedPlayer = async (revivedPlayerId, currentPlayers, dartOwnerId = null) => {
+        const alivePlayers = currentPlayers.filter(p => p.status === 'alive' && p.id !== revivedPlayerId);
+        if (alivePlayers.length === 0) return currentPlayers;
+
+        let hunter = dartOwnerId && dartOwnerId !== revivedPlayerId ? alivePlayers.find(p => p.id === dartOwnerId) : alivePlayers[Math.floor(Math.random() * alivePlayers.length)];
+        if (!hunter) hunter = alivePlayers[0];
+
+        const newTargetForRevived = hunter.targetId;
+        const nowStr = new Date().toISOString();
+
+        await supabase.from('players').update({ status: 'alive', target_id: newTargetForRevived, target_assigned_at: nowStr }).eq('id', revivedPlayerId);
+        await supabase.from('players').update({ target_id: revivedPlayerId, target_assigned_at: nowStr }).eq('id', hunter.id);
+        
+        return currentPlayers.map(p => {
+            if (p.id === revivedPlayerId) return { ...p, status: 'alive', targetId: newTargetForRevived, targetAssignedAt: nowStr };
+            if (p.id === hunter.id) return { ...p, targetId: revivedPlayerId, targetAssignedAt: nowStr };
+            return p;
+        });
+      };
+
+      const handleRevivePlayer = async (playerId) => await stitchRevivedPlayer(playerId, players);
+      
+      const handleUseGoldenDart = async (ownerId, reviveeId) => {
+        await supabase.from('players').update({ has_golden_dart: false }).eq('id', ownerId);
+        let currentPlayers = players.map(p => p.id === ownerId ? { ...p, hasGoldenDart: false } : p);
+        currentPlayers = await stitchRevivedPlayer(reviveeId, currentPlayers, ownerId);
+        setPlayers(currentPlayers);
       };
 
       const handleRemovePlayer = async (playerId) => {
         const playerToRemove = players.find(p => p.id === playerId);
         if (!playerToRemove) return;
-
-        const playersTargetingThis = players.filter(p => p.targetId === playerId);
-
-        // Optimistically stitch the chain and remove the player locally
-        setPlayers(prev => {
-          let next = prev.filter(p => p.id !== playerId);
-          playersTargetingThis.forEach(pt => {
-            next = next.map(p => p.id === pt.id ? { ...p, targetId: playerToRemove.targetId } : p);
-          });
-          return next;
-        });
-
-        // Stitch the chain in DB
-        for (const pt of playersTargetingThis) {
-          await supabase.from('players').update({ target_id: playerToRemove.targetId }).eq('id', pt.id);
+        if (playerToRemove.status === 'alive') {
+            const hunter = players.find(p => p.targetId === playerId);
+            if (hunter) await supabase.from('players').update({ target_id: playerToRemove.targetId, target_assigned_at: new Date().toISOString() }).eq('id', hunter.id);
         }
-        
-        // Delete from DB
         await supabase.from('players').delete().eq('id', playerId);
       };
 
-      const handleUseGoldenDart = async (ownerId, reviveeId) => {
-        const owner = players.find(p => p.id === ownerId);
-        const revivee = players.find(p => p.id === reviveeId);
-        if (!owner || !revivee || !owner.hasGoldenDart) return;
-
-        // Optimistic UI updates
-        setPlayers(prev => prev.map(p => {
-          if (p.id === ownerId) {
-            // Remove dart from owner, and revive if they were reviving themselves
-            return { ...p, hasGoldenDart: false, status: ownerId === reviveeId ? 'alive' : p.status };
+      const handleSweepExpired = async () => {
+          const now = new Date();
+          const expired = players.filter(p => {
+              if (p.status !== 'alive' || !p.targetAssignedAt) return false;
+              return (now - new Date(p.targetAssignedAt)) > 24 * 60 * 60 * 1000;
+          });
+          if (expired.length === 0) return;
+          let currentPlayers = [...players];
+          for (const player of expired) {
+              const hunter = currentPlayers.find(p => p.targetId === player.id);
+              if (hunter) {
+                  await supabase.from('players').update({ target_id: player.targetId, target_assigned_at: new Date().toISOString() }).eq('id', hunter.id);
+                  currentPlayers = currentPlayers.map(p => p.id === hunter.id ? { ...p, targetId: player.targetId, targetAssignedAt: new Date().toISOString() } : p);
+              }
+              await supabase.from('players').update({ status: 'eliminated', target_id: null }).eq('id', player.id);
+              currentPlayers = currentPlayers.map(p => p.id === player.id ? { ...p, status: 'eliminated', targetId: null } : p);
           }
-          if (p.id === reviveeId) {
-            // Revive the target
-            return { ...p, status: 'alive' };
-          }
-          return p;
-        }));
-
-        // Database updates
-        await supabase.from('players').update({ has_golden_dart: false }).eq('id', ownerId);
-        await supabase.from('players').update({ status: 'alive' }).eq('id', reviveeId);
+          setPlayers(currentPlayers);
       };
 
       const handlePlayerLogin = async (studentId) => {
         const match = players.find(p => p.studentId && p.studentId.toString().trim() === studentId);
-        if (!match) {
-          return { success: false, message: 'Student ID not found. See a staff member if you believe this is an error.' };
-        }
+        if (!match) return { success: false, message: 'ID not found. See staff.' };
         localStorage.setItem(PLAYER_LOGIN_KEY, studentId);
         setLoggedInStudentId(studentId);
         return { success: true };
       };
 
-      const handlePlayerLogout = () => {
-        localStorage.removeItem(PLAYER_LOGIN_KEY);
-        setLoggedInStudentId(null);
-      };
+      const handlePlayerLogout = () => { localStorage.removeItem(PLAYER_LOGIN_KEY); setLoggedInStudentId(null); };
 
       const handlePhotoUpload = async (playerId, file) => {
         const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
         const path = `${playerId}-${Date.now()}.${ext}`;
         const { error: uploadError } = await supabase.storage.from('player-photos').upload(path, file, { upsert: true, contentType: file.type });
-        if (uploadError) return { success: false, message: uploadError.message };
+        if (uploadError) return { success: false };
         const { data } = supabase.storage.from('player-photos').getPublicUrl(path);
-        const { error: updateError } = await supabase.from('players').update({ photo_url: data.publicUrl }).eq('id', playerId);
-        if (updateError) return { success: false, message: updateError.message };
+        await supabase.from('players').update({ photo_url: data.publicUrl }).eq('id', playerId);
         return { success: true };
       };
 
       const renderTabContent = () => {
         switch (activeTab) {
-          case 'dashboard':
-            return <DashboardView 
-              currentUser={currentUser} 
-              players={players} 
-              onEliminate={handleElimination} 
-              onLogin={handlePlayerLogin} 
-              onLogout={handlePlayerLogout}
-              onUseGoldenDart={handleUseGoldenDart} 
-            />;
-          case 'leaderboard':
-            return <LeaderboardView houses={houses} players={players} />;
-          case 'rules':
-            return <RulesView />;
-          case 'admin':
-            return isAdminAuthenticated ? (
-              <AdminView 
-                players={players} 
-                houses={houses} 
-                gameActive={gameActive}
-                onLoadRoster={handleLoadRoster} 
-                onSyncRoster={handleSyncTimesheetRoster} 
-                onStartGame={startGame}
-                onEndGame={endGame}
-                onResetGame={resetGame}
-                onGoldenDart={handleGoldenDart}
-                onRemoveGoldenDart={handleRemoveGoldenDart}
-                onPhotoUpload={handlePhotoUpload} 
-                onUpdateTarget={handleUpdateTarget}
-                onRevivePlayer={handleRevivePlayer}
-                onRemovePlayer={handleRemovePlayer}
-              />
-            ) : (
-              <AdminLogin onLogin={() => setIsAdminAuthenticated(true)} />
-            );
-          default:
-            return null;
+          case 'dashboard': return <DashboardView currentUser={currentUser} players={players} onEliminate={handleElimination} onUseGoldenDart={handleUseGoldenDart} onLogout={handlePlayerLogout} />;
+          case 'leaderboard': return <LeaderboardView houses={houses} players={players} />;
+          case 'rules': return <RulesView />;
+          case 'admin': return isAdminAuthenticated ? (
+              <AdminView players={players} houses={houses} gameActive={gameActive} onLoadRoster={handleLoadRoster} onSyncRoster={handleSyncTimesheetRoster} onStartGame={startGame} onEndGame={endGame} onResetGame={resetGame} onGoldenDart={handleGoldenDart} onRemoveGoldenDart={handleRemoveGoldenDart} onPhotoUpload={handlePhotoUpload} onUpdateTarget={handleUpdateTarget} onRevivePlayer={handleRevivePlayer} onRemovePlayer={handleRemovePlayer} onSweepExpired={handleSweepExpired} />
+            ) : <AdminLogin onLogin={() => setIsAdminAuthenticated(true)} />;
+          default: return null;
         }
       };
 
+      if (!currentUser && activeTab === 'dashboard') {
+          return (
+             <div className="min-h-screen relative overflow-x-hidden pt-8 md:pt-16 pb-28 md:pb-36 z-10">
+                 <PlayerLogin onLogin={handlePlayerLogin} onAdminClick={() => setActiveTab('admin')} />
+             </div>
+          );
+      }
+
       return (
-        <div className="min-h-screen font-sans text-slate-200 relative selection:bg-purple-500/30 overflow-x-hidden pb-32 md:pb-0">
-          <div className="relative z-10 flex flex-col min-h-screen">
-            {/* Header - Night Glass */}
-            <header className="bg-slate-900/40 backdrop-blur-3xl border-b border-purple-400/20 sticky top-0 z-40">
-              <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 md:h-20 flex items-center justify-end">
-                {currentUser ? (
-                  <div className="flex items-center gap-3 bg-slate-900/60 border border-purple-400/30 py-1.5 pl-2 pr-4 rounded-full shadow-inner backdrop-blur-md">
-                    <PlayerAvatar player={currentUser} size={36} />
-                    <span className="text-sm font-bold text-white hidden sm:inline truncate max-w-[150px]">{currentUser.name}</span>
-                    <button onClick={handlePlayerLogout} title="Log out" className="text-purple-300/70 hover:text-white transition-colors ml-2">
-                      <LogOut size={16} />
-                    </button>
-                  </div>
-                ) : (
-                  <div className="text-xs font-bold text-purple-300/50 uppercase tracking-widest hidden sm:block bg-slate-900/50 px-4 py-2 rounded-full">Secure Connection Established</div>
-                )}
-              </div>
-            </header>
+        <div className="min-h-screen font-sans relative overflow-x-hidden">
+          <main className="max-w-6xl mx-auto w-full px-4 pt-6 pb-[120px] relative z-10 min-h-[90vh]">
+            {renderTabContent()}
+          </main>
 
-            {/* Navigation - Floating perfect pill on mobile, sticky top on desktop */}
-            <nav className="fixed bottom-6 left-4 right-4 z-50 md:sticky md:top-20 md:bottom-auto md:left-auto md:right-auto md:bg-slate-900/40 md:border-t-0 md:border-b md:border-purple-400/25 md:backdrop-blur-3xl md:rounded-none bg-slate-900/70 backdrop-blur-3xl border border-purple-400/40 rounded-full shadow-[0_20px_40px_rgba(0,0,0,0.6),_0_0_25px_rgba(168,85,247,0.2)] overflow-hidden">
-              <div className="max-w-6xl mx-auto flex justify-around md:justify-start p-1.5 md:p-0">
-                {[
-                  { id: 'dashboard', label: 'Mission', icon: User },
-                  { id: 'leaderboard', label: 'Standings', icon: Trophy },
-                  { id: 'rules', label: 'Rules', icon: ShieldAlert },
-                  { id: 'admin', label: 'Admin', icon: Settings }
-                ].map(tab => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex flex-col md:flex-row items-center justify-center gap-1 md:gap-3 px-3 py-3 md:px-8 md:py-6 font-bold transition-all w-full md:w-auto md:border-b-2 rounded-full md:rounded-none ${
-                      activeTab === tab.id
-                        ? 'text-purple-200 md:border-purple-400 bg-purple-500/20 md:bg-purple-500/10 shadow-inner'
-                        : 'text-slate-400 hover:text-white border-transparent hover:bg-white/5'
-                    }`}
-                  >
-                    <tab.icon size={22} className={activeTab === tab.id ? 'drop-shadow-[0_0_10px_rgba(168,85,247,0.8)]' : ''} />
-                    <span className="text-[11px] md:text-sm tracking-wide">{tab.label}</span>
-                  </button>
-                ))}
-              </div>
-            </nav>
-
-            {/* Main Content Area */}
-            <main className="flex-1 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-8 pb-12 relative z-10">
-              {renderTabContent()}
-            </main>
-          </div>
+          {/* Floating Pill Navigation */}
+          <nav className="fixed bottom-6 left-4 right-4 z-50 pointer-events-none flex justify-center">
+            <div className="bg-black/60 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-auto">
+              {[
+                { id: 'dashboard', label: 'Mission', icon: Crosshair },
+                { id: 'leaderboard', label: 'Standings', icon: Trophy },
+                { id: 'rules', label: 'Rules', icon: ShieldAlert },
+                { id: 'admin', label: 'Admin', icon: Settings }
+              ].map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`flex items-center gap-2 px-4 md:px-6 py-3 md:py-3.5 font-bold transition-all rounded-full ${
+                    activeTab === tab.id
+                      ? 'bg-white text-black shadow-lg scale-[1.02]'
+                      : 'text-white/50 hover:text-white hover:bg-white/10'
+                  }`}
+                >
+                  <tab.icon size={18} className="shrink-0" />
+                  <span className={`text-[11px] md:text-sm tracking-wide ${activeTab === tab.id ? 'block' : 'hidden md:block'}`}>{tab.label}</span>
+                </button>
+              ))}
+            </div>
+          </nav>
         </div>
       );
     };
