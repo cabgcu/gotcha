@@ -18,6 +18,9 @@
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
+  <!-- Supabase -->
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
     body {
       margin: 0;
@@ -44,6 +47,40 @@
 
   <script type="text/babel">
     const { useState, useEffect, useMemo } = React;
+
+    // --- Supabase ---
+    // Only the publishable (anon) key belongs here: this page is a static,
+    // publicly-served file with no backend, so anything embedded in it is
+    // visible to anyone. Table access is governed by RLS policies instead.
+    const SUPABASE_URL = 'https://nmmshjdknmuzpgpquwec.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_PCxlxywY7W6K3TmMrSnSsw_NPXKugoZ';
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const fetchHouses = async () => {
+      const { data, error } = await supabase.from('houses').select('*').order('name');
+      if (error) { console.error('fetchHouses', error); return []; }
+      return data.map(h => ({ id: h.id, name: h.name, points: h.points }));
+    };
+
+    const fetchPlayers = async () => {
+      const { data, error } = await supabase.from('players').select('*').order('name');
+      if (error) { console.error('fetchPlayers', error); return []; }
+      return data.map(p => ({
+        id: p.id,
+        name: p.name,
+        house: p.house,
+        status: p.status,
+        targetId: p.target_id,
+        eliminations: p.eliminations,
+        hasGoldenDart: p.has_golden_dart
+      }));
+    };
+
+    const fetchGameActive = async () => {
+      const { data, error } = await supabase.from('game_state').select('active').eq('id', 1).maybeSingle();
+      if (error) { console.error('fetchGameActive', error); return false; }
+      return data ? data.active : false;
+    };
 
     // --- Lucide React Components (Manual implementation for CDN usage) ---
     // Normally we'd import these, but via CDN we render SVG strings or use the lucide script.
@@ -469,31 +506,30 @@
       );
     };
 
-    const AdminView = ({ players, setPlayers, houses, setHouses, startGame }) => {
+    const AdminView = ({ players, houses, onLoadRoster, startGame, onGoldenDart }) => {
       const [rosterText, setRosterText] = useState("");
       const [message, setMessage] = useState("");
+      const [busy, setBusy] = useState(false);
 
-      const handleParseRoster = () => {
+      const handleParseRoster = async () => {
         if (!rosterText.trim()) return;
-        
+
         const lines = rosterText.split('\n');
         const newPlayers = [];
         const discoveredHouses = new Set();
-        
-        lines.forEach((line, index) => {
+
+        lines.forEach((line) => {
           if (!line.trim()) return;
           const parts = line.split(',');
           if (parts.length >= 2) {
             const name = parts[0].trim();
             const houseName = parts[1].trim();
             discoveredHouses.add(houseName);
-            
+
             newPlayers.push({
-              id: `p_${Date.now()}_${index}`,
               name,
               house: houseName,
               status: 'alive',
-              targetId: null,
               eliminations: 0,
               hasGoldenDart: false
             });
@@ -501,21 +537,17 @@
         });
 
         if (newPlayers.length > 0) {
-          setPlayers(newPlayers);
-          const newHouses = Array.from(discoveredHouses).map((hName, i) => ({
-            id: `h_${i}`,
-            name: hName,
-            points: 0
-          }));
-          setHouses(newHouses);
-          setMessage(`Successfully loaded ${newPlayers.length} players across ${newHouses.length} houses.`);
+          setBusy(true);
+          await onLoadRoster(newPlayers, Array.from(discoveredHouses));
+          setBusy(false);
+          setMessage(`Successfully loaded ${newPlayers.length} players across ${discoveredHouses.size} houses.`);
         } else {
           setMessage("Failed to parse roster. Please ensure 'Name, House' format.");
         }
       };
 
-      const handleGoldenDart = (playerId) => {
-        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, hasGoldenDart: true } : p));
+      const handleGoldenDart = async (playerId) => {
+        await onGoldenDart(playerId);
         setMessage(`Golden dart awarded!`);
       };
 
@@ -535,7 +567,9 @@
               </div>
               
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="secondary" onClick={handleParseRoster} className="flex-1 py-4">Load Roster</Button>
+                <Button variant="secondary" onClick={handleParseRoster} disabled={busy} className="flex-1 py-4">
+                  {busy ? 'Loading...' : 'Load Roster'}
+                </Button>
                 <Button variant="primary" onClick={startGame} disabled={players.length < 2} className="flex-1 py-4">
                   Initialize Targets
                 </Button>
@@ -596,49 +630,81 @@
 
       const currentUser = players.find(p => p.id === currentUserId) || null;
 
-      const startGame = () => {
-        if (players.length < 2) return;
-        const shuffled = [...players].sort(() => Math.random() - 0.5);
-        const updatedPlayers = shuffled.map((player, index) => {
-          const targetIndex = (index + 1) % shuffled.length;
-          return {
-            ...player,
-            status: 'alive',
-            targetId: shuffled[targetIndex].id,
-            eliminations: 0
-          };
-        });
-        setPlayers(updatedPlayers);
-        setGameActive(true);
-        setHouses(prev => prev.map(h => ({...h, points: 0})));
+      useEffect(() => {
+        let cancelled = false;
+
+        const loadAll = async () => {
+          const [h, p, g] = await Promise.all([fetchHouses(), fetchPlayers(), fetchGameActive()]);
+          if (cancelled) return;
+          setHouses(h.length ? h : DEFAULT_HOUSES);
+          setPlayers(p);
+          setGameActive(g);
+        };
+        loadAll();
+
+        const channel = supabase
+          .channel('gotcha-sync')
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'players' }, () => fetchPlayers().then(p => !cancelled && setPlayers(p)))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'houses' }, () => fetchHouses().then(h => !cancelled && setHouses(h.length ? h : DEFAULT_HOUSES)))
+          .on('postgres_changes', { event: '*', schema: 'public', table: 'game_state' }, () => fetchGameActive().then(g => !cancelled && setGameActive(g)))
+          .subscribe();
+
+        return () => {
+          cancelled = true;
+          supabase.removeChannel(channel);
+        };
+      }, []);
+
+      const handleLoadRoster = async (newPlayers, houseNames) => {
+        await supabase.from('players').delete().neq('id', 0);
+        await supabase.from('houses').delete().neq('id', 0);
+        await supabase.from('houses').insert(houseNames.map(name => ({ name, points: 0 })));
+        await supabase.from('players').insert(newPlayers.map(p => ({
+          name: p.name,
+          house: p.house,
+          status: p.status,
+          eliminations: p.eliminations,
+          has_golden_dart: p.hasGoldenDart
+        })));
       };
 
-      const handleElimination = (eliminatorId, targetId) => {
-        setPlayers(prevPlayers => {
-          const eliminator = prevPlayers.find(p => p.id === eliminatorId);
-          const target = prevPlayers.find(p => p.id === targetId);
-          if (!eliminator || !target || target.status !== 'alive') return prevPlayers;
-          return prevPlayers.map(p => {
-            if (p.id === eliminatorId) {
-              return { ...p, targetId: target.targetId, eliminations: p.eliminations + 1 };
-            }
-            if (p.id === targetId) {
-              return { ...p, status: 'eliminated', targetId: null };
-            }
-            return p;
-          });
-        });
+      const startGame = async () => {
+        if (players.length < 2) return;
+        const shuffled = [...players].sort(() => Math.random() - 0.5);
+        await Promise.all(shuffled.map((player, index) =>
+          supabase.from('players').update({
+            status: 'alive',
+            target_id: shuffled[(index + 1) % shuffled.length].id,
+            eliminations: 0
+          }).eq('id', player.id)
+        ));
+        await supabase.from('houses').update({ points: 0 }).neq('id', 0);
+        await supabase.from('game_state').update({ active: true }).eq('id', 1);
+      };
 
-        setHouses(prevHouses => {
-          const eliminator = players.find(p => p.id === eliminatorId);
-          if(!eliminator) return prevHouses;
-          return prevHouses.map(h => {
-            if (h.name === eliminator.house) {
-              return { ...h, points: h.points + 10 };
-            }
-            return h;
-          });
-        });
+      const handleElimination = async (eliminatorId, targetId) => {
+        const eliminator = players.find(p => p.id === eliminatorId);
+        const target = players.find(p => p.id === targetId);
+        if (!eliminator || !target || target.status !== 'alive') return;
+
+        await supabase.from('players').update({
+          target_id: target.targetId,
+          eliminations: eliminator.eliminations + 1
+        }).eq('id', eliminator.id);
+
+        await supabase.from('players').update({
+          status: 'eliminated',
+          target_id: null
+        }).eq('id', target.id);
+
+        const house = houses.find(h => h.name === eliminator.house);
+        if (house) {
+          await supabase.from('houses').update({ points: house.points + 10 }).eq('id', house.id);
+        }
+      };
+
+      const handleGoldenDart = async (playerId) => {
+        await supabase.from('players').update({ has_golden_dart: true }).eq('id', playerId);
       };
 
       const renderTabContent = () => {
@@ -651,7 +717,7 @@
             return <RulesView />;
           case 'admin':
             return isAdminAuthenticated ? (
-              <AdminView players={players} setPlayers={setPlayers} houses={houses} setHouses={setHouses} startGame={startGame} />
+              <AdminView players={players} houses={houses} onLoadRoster={handleLoadRoster} startGame={startGame} onGoldenDart={handleGoldenDart} />
             ) : (
               <AdminLogin onLogin={() => setIsAdminAuthenticated(true)} />
             );
