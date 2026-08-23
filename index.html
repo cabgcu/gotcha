@@ -86,6 +86,43 @@
       return data ? data.active : false;
     };
 
+    // The timesheet app (cabgcu/timesheet) shares this same Supabase project,
+    // so its `roster`/`settings` tables can be read directly with no separate
+    // API or credentials — that's what lets Admin auto-sync players instead
+    // of pasting a CSV.
+    const fetchTimesheetRoster = async () => {
+      const { data: settingRow, error: settingsError } = await supabase
+        .from('settings')
+        .select('value')
+        .eq('key', 'ActiveYear')
+        .maybeSingle();
+      if (settingsError) throw new Error(settingsError.message);
+      const activeYear = settingRow && settingRow.value;
+      if (!activeYear) throw new Error('Could not find an active academic year in the timesheet settings.');
+
+      const { data: rosterRows, error: rosterError } = await supabase
+        .from('roster')
+        .select('student_id, name, team')
+        .eq('academic_year', activeYear)
+        .order('name');
+      if (rosterError) throw new Error(rosterError.message);
+      if (!rosterRows || rosterRows.length === 0) {
+        throw new Error(`No students found on the ${activeYear} timesheet roster.`);
+      }
+
+      return {
+        activeYear,
+        players: rosterRows.map(r => ({
+          studentId: r.student_id,
+          name: r.name,
+          house: r.team,
+          status: 'alive',
+          eliminations: 0,
+          hasGoldenDart: false
+        }))
+      };
+    };
+
     // --- Lucide React Components (Manual implementation for CDN usage) ---
     // Normally we'd import these, but via CDN we render SVG strings or use the lucide script.
     // To keep the React component structure clean, we'll wrap the raw SVGs in simple functional components.
@@ -126,6 +163,7 @@
     const Star = (props) => <IconWrapper name="star" {...props} />;
     const Upload = (props) => <IconWrapper name="upload" {...props} />;
     const LogOut = (props) => <IconWrapper name="log-out" {...props} />;
+    const RefreshCw = (props) => <IconWrapper name="refresh-cw" {...props} />;
 
     // --- End Icons ---
 
@@ -577,11 +615,23 @@
       );
     };
 
-    const AdminView = ({ players, houses, onLoadRoster, startGame, onGoldenDart, onPhotoUpload }) => {
+    const AdminView = ({ players, houses, onLoadRoster, onSyncRoster, startGame, onGoldenDart, onPhotoUpload }) => {
       const [rosterText, setRosterText] = useState("");
       const [message, setMessage] = useState("");
       const [busy, setBusy] = useState(false);
+      const [syncing, setSyncing] = useState(false);
+      const [showManual, setShowManual] = useState(false);
       const [uploadingId, setUploadingId] = useState(null);
+
+      const handleSyncRoster = async () => {
+        setSyncing(true);
+        setMessage("");
+        const result = await onSyncRoster();
+        setSyncing(false);
+        setMessage(result.success
+          ? `Synced ${result.count} players from the ${result.activeYear} timesheet roster across ${result.houseCount} houses.`
+          : `Sync failed: ${result.message}`);
+      };
 
       const handleParseRoster = async () => {
         if (!rosterText.trim()) return;
@@ -638,25 +688,39 @@
           <div className="bg-white/5 backdrop-blur-xl p-8 rounded-3xl border border-white/10 shadow-2xl">
             <h2 className="text-2xl font-black text-white mb-6 flex items-center gap-3"><Settings className="text-slate-400"/> Game Setup</h2>
             <div className="space-y-5">
-              <div>
-                <label className="block text-sm font-bold text-slate-400 mb-3 ml-1">Upload Roster (Format: Student ID, Name, House per line)</label>
-                <textarea
-                  value={rosterText}
-                  onChange={(e) => setRosterText(e.target.value)}
-                  placeholder="10234567, John Doe, Gryffindor&#10;10298765, Jane Smith, Slytherin"
-                  className="w-full h-40 bg-black/50 border border-white/10 rounded-2xl p-5 text-white focus:border-orange-500 focus:outline-none font-mono text-sm shadow-inner transition-colors"
-                ></textarea>
-                <p className="text-xs text-slate-500 mt-2 ml-1">Loading a roster resets all players and targets. Upload player photos below afterward.</p>
+              <div className="bg-blue-500/10 border border-blue-500/20 p-5 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div>
+                  <h3 className="text-white font-bold flex items-center gap-2"><RefreshCw size={18} className="text-blue-400"/> Sync from Timesheet Roster</h3>
+                  <p className="text-sm text-slate-400 mt-1">Pulls the active year's roster (Student ID, name, team) straight from the timesheet database — no manual upload needed.</p>
+                </div>
+                <Button variant="primary" onClick={handleSyncRoster} disabled={syncing} className="whitespace-nowrap px-6 py-3">
+                  {syncing ? 'Syncing...' : 'Sync Roster'}
+                </Button>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="secondary" onClick={handleParseRoster} disabled={busy} className="flex-1 py-4">
-                  {busy ? 'Loading...' : 'Load Roster'}
-                </Button>
-                <Button variant="primary" onClick={startGame} disabled={players.length < 2} className="flex-1 py-4">
-                  Initialize Targets
-                </Button>
-              </div>
+              <button onClick={() => setShowManual(s => !s)} className="text-xs font-bold text-slate-500 hover:text-slate-300 uppercase tracking-widest transition-colors">
+                {showManual ? 'Hide manual override' : 'Need to add someone manually? →'}
+              </button>
+
+              {showManual && (
+                <div>
+                  <label className="block text-sm font-bold text-slate-400 mb-3 ml-1">Manual Roster Override (Format: Student ID, Name, House per line)</label>
+                  <textarea
+                    value={rosterText}
+                    onChange={(e) => setRosterText(e.target.value)}
+                    placeholder="10234567, John Doe, Gryffindor&#10;10298765, Jane Smith, Slytherin"
+                    className="w-full h-40 bg-black/50 border border-white/10 rounded-2xl p-5 text-white focus:border-orange-500 focus:outline-none font-mono text-sm shadow-inner transition-colors"
+                  ></textarea>
+                  <p className="text-xs text-slate-500 mt-2 ml-1">This replaces the entire roster — use it only for players outside the timesheet roster.</p>
+                  <Button variant="secondary" onClick={handleParseRoster} disabled={busy} className="w-full py-4 mt-4">
+                    {busy ? 'Loading...' : 'Load Manual Roster'}
+                  </Button>
+                </div>
+              )}
+
+              <Button variant="primary" onClick={startGame} disabled={players.length < 2} className="w-full py-4">
+                Initialize Targets
+              </Button>
 
               {message && <div className="p-4 bg-orange-500/10 text-orange-400 rounded-xl border border-orange-500/20 text-sm font-bold text-center">{message}</div>}
             </div>
@@ -770,6 +834,17 @@
         })));
       };
 
+      const handleSyncTimesheetRoster = async () => {
+        try {
+          const { activeYear, players: rosterPlayers } = await fetchTimesheetRoster();
+          const discoveredHouses = Array.from(new Set(rosterPlayers.map(p => p.house)));
+          await handleLoadRoster(rosterPlayers, discoveredHouses);
+          return { success: true, count: rosterPlayers.length, houseCount: discoveredHouses.length, activeYear };
+        } catch (err) {
+          return { success: false, message: err.message };
+        }
+      };
+
       const startGame = async () => {
         if (players.length < 2) return;
         const shuffled = [...players].sort(() => Math.random() - 0.5);
@@ -845,7 +920,7 @@
             return <RulesView />;
           case 'admin':
             return isAdminAuthenticated ? (
-              <AdminView players={players} houses={houses} onLoadRoster={handleLoadRoster} startGame={startGame} onGoldenDart={handleGoldenDart} onPhotoUpload={handlePhotoUpload} />
+              <AdminView players={players} houses={houses} onLoadRoster={handleLoadRoster} onSyncRoster={handleSyncTimesheetRoster} startGame={startGame} onGoldenDart={handleGoldenDart} onPhotoUpload={handlePhotoUpload} />
             ) : (
               <AdminLogin onLogin={() => setIsAdminAuthenticated(true)} />
             );
