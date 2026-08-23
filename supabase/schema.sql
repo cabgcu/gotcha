@@ -66,31 +66,12 @@ create policy "Public read game_state" on public.game_state for select using (tr
 create policy "Public write game_state" on public.game_state for all using (true) with check (true);
 
 -- Enable Realtime so the leaderboard/dashboard update live on every device.
--- ALTER PUBLICATION ... ADD TABLE has no IF NOT EXISTS, so guard each one
--- against pg_publication_tables to keep this script re-runnable.
-do $$
-begin
-  if not exists (
-    select 1 from pg_publication_tables
-    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'houses'
-  ) then
-    alter publication supabase_realtime add table public.houses;
-  end if;
-
-  if not exists (
-    select 1 from pg_publication_tables
-    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'players'
-  ) then
-    alter publication supabase_realtime add table public.players;
-  end if;
-
-  if not exists (
-    select 1 from pg_publication_tables
-    where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'game_state'
-  ) then
-    alter publication supabase_realtime add table public.game_state;
-  end if;
-end $$;
+-- SET (not ADD) declares the full table list outright instead of erroring
+-- when a table is already published, so this single statement is safe to
+-- re-run. It assumes these three tables are the only ones this project's
+-- supabase_realtime publication should carry — add to the list here if a
+-- future table needs realtime too.
+alter publication supabase_realtime set table public.houses, public.players, public.game_state;
 
 -- Storage bucket for player photos uploaded from the Admin roster screen.
 -- Public + open writes to match the same no-auth trust model as the
