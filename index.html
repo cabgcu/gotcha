@@ -10,21 +10,19 @@
 
   <link rel="icon" href="data:," />
 
-  <!-- Tailwind CSS -->
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+
+  <!-- Tailwind CSS (kept blocking - the inline config script right after it needs `tailwind` to already exist) -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- React & ReactDOM -->
-  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-
-  <!-- Babel for JSX -->
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-
-  <!-- Supabase -->
-  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <!-- React, ReactDOM, Babel, Lucide, Supabase: deferred so they download in parallel
+       instead of blocking the parser one at a time. None of them are needed until the
+       app script at the bottom runs (after DOMContentLoaded), so this is safe. -->
+  <script defer src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script defer src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script defer src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script defer src="https://unpkg.com/lucide@1.33.0"></script>
+  <script defer src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
   <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1184,8 +1182,10 @@
         const loadAll = async () => {
           const [h, p, g] = await Promise.all([fetchHouses(), fetchPlayers(), fetchGameActive()]);
           if (cancelled) return;
-          setHouses(h.length ? h : DEFAULT_HOUSES);
-          setPlayers(p);
+          const nextHouses = h.length ? h : DEFAULT_HOUSES;
+          // Bail out of re-rendering the whole tree every 5s when polling turns up no real change
+          setHouses(prev => JSON.stringify(prev) === JSON.stringify(nextHouses) ? prev : nextHouses);
+          setPlayers(prev => JSON.stringify(prev) === JSON.stringify(p) ? prev : p);
           setGameActive(g);
         };
         loadAll();
