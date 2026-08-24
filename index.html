@@ -804,14 +804,14 @@
                   </div>
                 ) : isRevealing ? (
                   <div className="flex flex-col items-center justify-center relative z-10 w-full mt-4 sm:mt-4">
-                    <PlayerAvatar player={spinDisplay} size={72} className="motion-blur border-white/40 sm:!w-[160px] sm:!h-[160px]" />
+                    <PlayerAvatar player={spinDisplay} size={120} className="motion-blur border-white/40 sm:!w-[160px] sm:!h-[160px]" />
                     <h3 className="text-lg sm:text-4xl font-black text-white mt-3 sm:mt-6 mb-1 sm:mb-2 tracking-tighter motion-blur truncate max-w-full px-4">{spinDisplay?.name || "ACQUIRING..."}</h3>
                     <p className="text-white/50 uppercase tracking-[0.2em] text-[8px] sm:text-xs font-bold animate-pulse">Decrypting Target...</p>
                   </div>
                 ) : target ? (
                   <div className="flex flex-col items-center justify-center relative z-10 mt-4 sm:mt-4 animate-in fade-in zoom-in duration-500 w-full">
                     <div className="text-[8px] sm:text-[10px] text-white/70 bg-white/10 px-2 sm:px-4 py-0.5 sm:py-1 rounded-full border border-white/20 uppercase tracking-[0.3em] mb-2 sm:mb-6 font-bold">WANTED</div>
-                    <PlayerAvatar player={target} size={72} className="border-white/30 sm:!w-[180px] sm:!h-[180px]" />
+                    <PlayerAvatar player={target} size={120} className="border-white/30 sm:!w-[180px] sm:!h-[180px]" />
                     <h3 className="text-xl sm:text-5xl font-black text-white mt-3 sm:mt-8 mb-1 sm:mb-3 text-center tracking-tight truncate max-w-full px-2">{target.name}</h3>
                     <p className="text-[10px] sm:text-base text-white/50 font-medium mb-3 sm:mb-10">{target.house}</p>
                     <Button variant="primary" className="w-full sm:w-auto px-6 sm:px-14 py-2.5 sm:py-5 text-xs sm:text-lg" onClick={() => setIsModalOpen(true)}>
