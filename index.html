@@ -206,7 +206,8 @@
         hasGoldenDart: p.has_golden_dart,
         studentId: p.student_id,
         photoUrl: p.photo_url,
-        targetAssignedAt: p.target_assigned_at
+        targetAssignedAt: p.target_assigned_at,
+        targetAcquiredAt: p.target_acquired_at
       }));
     };
 
@@ -438,7 +439,7 @@
       );
     };
 
-    const DashboardView = ({ currentUser, players, onEliminate, onUseGoldenDart, onLogout }) => {
+    const DashboardView = ({ currentUser, players, onEliminate, onUseGoldenDart, onAcquireTarget, onLogout }) => {
       const [isModalOpen, setIsModalOpen] = useState(false);
       const [isDartModalOpen, setIsDartModalOpen] = useState(false);
       const [isRevealing, setIsRevealing] = useState(false);
@@ -450,14 +451,18 @@
       const eliminatedPlayers = useMemo(() => players.filter(p => p.status === 'eliminated'), [players]);
       const aliveCount = useMemo(() => players.filter(p => p.status === 'alive').length, [players]);
       const isTrueWinner = currentUser && currentUser.targetId === currentUser.id && aliveCount <= 1;
+      // A target that's been assigned to this player but that they haven't personally
+      // "acquired" yet - their 24h clock only starts once they tap Acquire Target, so
+      // everyone's window is based on when they engaged, not a shared game-start time.
+      const needsAcquire = !!(currentUser && currentUser.status === 'alive' && currentUser.targetId && currentUser.targetId !== currentUser.id && !currentUser.targetAcquiredAt);
 
       // Target Reveal Spin Animation
       useEffect(() => {
         if (!currentUser) return;
         const key = `target_seen_${currentUser.id}_${currentUser.targetId}`;
-        
-        // Trigger if they haven't seen this target AND it's not themselves (Victory state)
-        if (currentUser.targetId && currentUser.targetId !== currentUser.id && !localStorage.getItem(key)) {
+
+        // Trigger once they've acquired this target (and haven't seen the reveal yet), skipping the Victory state
+        if (currentUser.targetId && currentUser.targetId !== currentUser.id && currentUser.targetAcquiredAt && !localStorage.getItem(key)) {
           setIsRevealing(true);
           
           const pool = players.filter(p => p.id !== currentUser.id);
@@ -485,14 +490,15 @@
         }
       }, [currentUser, target, players]);
 
-      // Server-backed 24-hour Expiration Timer
+      // Server-backed 24-hour Expiration Timer (starts from when the player acquired their
+      // target, not from the shared assignment time, so everyone's window is personal)
       useEffect(() => {
-        if (!currentUser || !currentUser.targetId || currentUser.targetId === currentUser.id || isRevealing || !currentUser.targetAssignedAt) {
+        if (!currentUser || !currentUser.targetId || currentUser.targetId === currentUser.id || isRevealing || !currentUser.targetAcquiredAt) {
           setTimeLeft(null);
           return;
         }
 
-        const deadline = new Date(currentUser.targetAssignedAt).getTime() + (24 * 60 * 60 * 1000);
+        const deadline = new Date(currentUser.targetAcquiredAt).getTime() + (24 * 60 * 60 * 1000);
 
         const updateTimer = () => {
           const now = Date.now();
@@ -601,6 +607,17 @@
                 ) : currentUser.targetId === currentUser.id ? (
                   <div className="text-center py-16 text-white/30 font-medium italic relative z-10 mt-6">
                     Target re-sync in progress. Check back shortly...
+                  </div>
+                ) : needsAcquire ? (
+                  <div className="flex flex-col items-center text-center z-10 animate-in fade-in zoom-in duration-500 w-full mt-6">
+                    <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white/10 rounded-full flex items-center justify-center mb-6 border border-white/20 shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                      <Target size={48} className="text-white" />
+                    </div>
+                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight mb-2 uppercase">Target Ready</h2>
+                    <p className="text-sm sm:text-base text-white/50 font-medium max-w-xs mb-8">Your next mission is locked in. Your 24-hour clock starts the moment you acquire it.</p>
+                    <Button variant="primary" className="w-full sm:w-auto px-10 sm:px-14 py-4 sm:py-5 text-base sm:text-lg" onClick={() => onAcquireTarget(currentUser.id)}>
+                      Acquire Target
+                    </Button>
                   </div>
                 ) : isRevealing ? (
                   <div className="flex flex-col items-center justify-center relative z-10 w-full mt-8 sm:mt-4">
@@ -843,9 +860,10 @@
     const getPlayerTimerInfo = (player, now) => {
       if (player.status !== 'alive') return { label: '—', pct: null, tone: 'muted' };
       if (player.targetId === player.id) return { label: 'Winner', pct: 100, tone: 'win' };
-      if (!player.targetAssignedAt) return { label: 'No timer', pct: null, tone: 'muted' };
+      if (!player.targetId) return { label: 'No timer', pct: null, tone: 'muted' };
+      if (!player.targetAcquiredAt) return { label: 'Awaiting acquire', pct: null, tone: 'muted' };
       const totalMs = 24 * 60 * 60 * 1000;
-      const deadline = new Date(player.targetAssignedAt).getTime() + totalMs;
+      const deadline = new Date(player.targetAcquiredAt).getTime() + totalMs;
       const diff = deadline - now;
       if (diff <= 0) return { label: 'Expired', pct: 100, tone: 'expired' };
       const pct = Math.min(100, Math.max(0, Math.round(((totalMs - diff) / totalMs) * 100)));
@@ -912,8 +930,8 @@
             if (isSweepingRef.current || !gameActiveRef.current || !playersRef.current.length) return;
             const now = new Date();
             const hasExpired = playersRef.current.some(p => {
-                if (p.status !== 'alive' || !p.targetAssignedAt) return false;
-                return (now - new Date(p.targetAssignedAt)) > 24 * 60 * 60 * 1000;
+                if (p.status !== 'alive' || !p.targetAcquiredAt) return false;
+                return (now - new Date(p.targetAcquiredAt)) > 24 * 60 * 60 * 1000;
             });
             if (hasExpired) {
               isSweepingRef.current = true;
@@ -1109,7 +1127,7 @@
                           <option key={p.id} value={p.id}>{p.name} ({p.status})</option>
                         ))}
                       </select>
-                      <p className="text-[10px] text-white/30 ml-1">Note: This resets their 24h timer automatically.</p>
+                      <p className="text-[10px] text-white/30 ml-1">Note: They'll need to tap Acquire Target again - their 24h window starts fresh from that moment, not from now.</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-4 border-t border-white/10">
@@ -1221,7 +1239,7 @@
 
         await Promise.all(shuffled.map((player, index) =>
           supabase.from('players').update({
-            status: 'alive', target_id: shuffled[(index + 1) % shuffled.length].id, eliminations: 0, target_assigned_at: now
+            status: 'alive', target_id: shuffled[(index + 1) % shuffled.length].id, eliminations: 0, target_assigned_at: now, target_acquired_at: null
           }).eq('id', player.id)
         ));
         await supabase.from('houses').update({ points: 0 }).neq('id', 0);
@@ -1233,7 +1251,7 @@
       const resetGame = async () => {
         await supabase.from('game_state').update({ active: false }).eq('id', 1);
         await supabase.from('houses').update({ points: 0 }).neq('id', 0);
-        await supabase.from('players').update({ status: 'alive', target_id: null, eliminations: 0, has_golden_dart: false, target_assigned_at: null }).neq('id', 0);
+        await supabase.from('players').update({ status: 'alive', target_id: null, eliminations: 0, has_golden_dart: false, target_assigned_at: null, target_acquired_at: null }).neq('id', 0);
       };
 
       const handleElimination = async (eliminatorId, targetId) => {
@@ -1242,7 +1260,7 @@
         if (!eliminator || !target || target.status !== 'alive') return;
         const now = new Date().toISOString();
 
-        await supabase.from('players').update({ target_id: target.targetId, eliminations: eliminator.eliminations + 1, target_assigned_at: now }).eq('id', eliminator.id);
+        await supabase.from('players').update({ target_id: target.targetId, eliminations: eliminator.eliminations + 1, target_assigned_at: now, target_acquired_at: null }).eq('id', eliminator.id);
         await supabase.from('players').update({ status: 'eliminated', target_id: null }).eq('id', target.id);
         const house = houses.find(h => h.name === eliminator.house);
         if (house) await supabase.from('houses').update({ points: house.points + 10 }).eq('id', house.id);
@@ -1253,7 +1271,7 @@
 
       const handleUpdateTarget = async (playerId, newTargetId) => {
         const now = new Date().toISOString();
-        await supabase.from('players').update({ target_id: newTargetId, target_assigned_at: now }).eq('id', playerId);
+        await supabase.from('players').update({ target_id: newTargetId, target_assigned_at: now, target_acquired_at: null }).eq('id', playerId);
       };
 
       const stitchRevivedPlayer = async (revivedPlayerId, currentPlayers, dartOwnerId = null) => {
@@ -1266,12 +1284,12 @@
         const newTargetForRevived = hunter.targetId;
         const nowStr = new Date().toISOString();
 
-        await supabase.from('players').update({ status: 'alive', target_id: newTargetForRevived, target_assigned_at: nowStr }).eq('id', revivedPlayerId);
-        await supabase.from('players').update({ target_id: revivedPlayerId, target_assigned_at: nowStr }).eq('id', hunter.id);
-        
+        await supabase.from('players').update({ status: 'alive', target_id: newTargetForRevived, target_assigned_at: nowStr, target_acquired_at: null }).eq('id', revivedPlayerId);
+        await supabase.from('players').update({ target_id: revivedPlayerId, target_assigned_at: nowStr, target_acquired_at: null }).eq('id', hunter.id);
+
         return currentPlayers.map(p => {
-            if (p.id === revivedPlayerId) return { ...p, status: 'alive', targetId: newTargetForRevived, targetAssignedAt: nowStr };
-            if (p.id === hunter.id) return { ...p, targetId: revivedPlayerId, targetAssignedAt: nowStr };
+            if (p.id === revivedPlayerId) return { ...p, status: 'alive', targetId: newTargetForRevived, targetAssignedAt: nowStr, targetAcquiredAt: null };
+            if (p.id === hunter.id) return { ...p, targetId: revivedPlayerId, targetAssignedAt: nowStr, targetAcquiredAt: null };
             return p;
         });
       };
@@ -1285,12 +1303,18 @@
         setPlayers(currentPlayers);
       };
 
+      const handleAcquireTarget = async (playerId) => {
+        const now = new Date().toISOString();
+        await supabase.from('players').update({ target_acquired_at: now }).eq('id', playerId);
+        setPlayers(prev => prev.map(p => p.id === playerId ? { ...p, targetAcquiredAt: now } : p));
+      };
+
       const handleRemovePlayer = async (playerId) => {
         const playerToRemove = players.find(p => p.id === playerId);
         if (!playerToRemove) return;
         if (playerToRemove.status === 'alive') {
             const hunter = players.find(p => p.targetId === playerId);
-            if (hunter) await supabase.from('players').update({ target_id: playerToRemove.targetId, target_assigned_at: new Date().toISOString() }).eq('id', hunter.id);
+            if (hunter) await supabase.from('players').update({ target_id: playerToRemove.targetId, target_assigned_at: new Date().toISOString(), target_acquired_at: null }).eq('id', hunter.id);
         }
         await supabase.from('players').delete().eq('id', playerId);
       };
@@ -1301,7 +1325,7 @@
         const hunter = players.find(p => p.targetId === playerId);
         const now = new Date().toISOString();
         if (hunter) {
-          await supabase.from('players').update({ target_id: player.targetId, target_assigned_at: now }).eq('id', hunter.id);
+          await supabase.from('players').update({ target_id: player.targetId, target_assigned_at: now, target_acquired_at: null }).eq('id', hunter.id);
         }
         await supabase.from('players').update({ status: 'eliminated', target_id: null }).eq('id', playerId);
       };
@@ -1309,16 +1333,16 @@
       const handleSweepExpired = async () => {
           const now = new Date();
           const expired = players.filter(p => {
-              if (p.status !== 'alive' || !p.targetAssignedAt) return false;
-              return (now - new Date(p.targetAssignedAt)) > 24 * 60 * 60 * 1000;
+              if (p.status !== 'alive' || !p.targetAcquiredAt) return false;
+              return (now - new Date(p.targetAcquiredAt)) > 24 * 60 * 60 * 1000;
           });
           if (expired.length === 0) return;
           let currentPlayers = [...players];
           for (const player of expired) {
               const hunter = currentPlayers.find(p => p.targetId === player.id);
               if (hunter) {
-                  await supabase.from('players').update({ target_id: player.targetId, target_assigned_at: new Date().toISOString() }).eq('id', hunter.id);
-                  currentPlayers = currentPlayers.map(p => p.id === hunter.id ? { ...p, targetId: player.targetId, targetAssignedAt: new Date().toISOString() } : p);
+                  await supabase.from('players').update({ target_id: player.targetId, target_assigned_at: new Date().toISOString(), target_acquired_at: null }).eq('id', hunter.id);
+                  currentPlayers = currentPlayers.map(p => p.id === hunter.id ? { ...p, targetId: player.targetId, targetAssignedAt: new Date().toISOString(), targetAcquiredAt: null } : p);
               }
               await supabase.from('players').update({ status: 'eliminated', target_id: null }).eq('id', player.id);
               currentPlayers = currentPlayers.map(p => p.id === player.id ? { ...p, status: 'eliminated', targetId: null } : p);
@@ -1348,7 +1372,7 @@
 
       const renderTabContent = () => {
         switch (activeTab) {
-          case 'dashboard': return <DashboardView currentUser={currentUser} players={players} onEliminate={handleElimination} onUseGoldenDart={handleUseGoldenDart} onLogout={handlePlayerLogout} />;
+          case 'dashboard': return <DashboardView currentUser={currentUser} players={players} onEliminate={handleElimination} onUseGoldenDart={handleUseGoldenDart} onAcquireTarget={handleAcquireTarget} onLogout={handlePlayerLogout} />;
           case 'leaderboard': return <LeaderboardView houses={houses} players={players} />;
           case 'rules': return <RulesView />;
           case 'admin': return isAdminAuthenticated ? (

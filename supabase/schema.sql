@@ -28,10 +28,19 @@ create table if not exists public.players (
 alter table public.players add column if not exists student_id text;
 alter table public.players add column if not exists photo_url text;
 
--- Timestamp of when a player's current target was assigned. Set on
--- "Start Game", on every elimination/revive/reassignment, and read back
--- by the 24-hour expiration sweep in the app.
+-- Timestamp of when a player's current target was assigned by the system
+-- (Start Game / elimination / revive / reassignment). Kept for reference,
+-- but the 24-hour expiration sweep no longer reads this directly.
 alter table public.players add column if not exists target_assigned_at timestamptz;
+
+-- Timestamp of when the PLAYER actually tapped "Acquire Target" for their
+-- current target. Null until they do, which is what gates the reveal
+-- behind the Acquire Target button. This - not target_assigned_at - is
+-- what the 24-hour expiration sweep reads, so every player's window
+-- starts from when they personally engaged, not a shared assignment time.
+-- Reset to null any time a player's target_id changes, so they have to
+-- acquire it again.
+alter table public.players add column if not exists target_acquired_at timestamptz;
 
 create unique index if not exists players_student_id_key
   on public.players (student_id)
