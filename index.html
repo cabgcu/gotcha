@@ -670,7 +670,7 @@
               </div>
               <div className="bg-white/5 border border-white/10 p-4 rounded-2xl flex items-center justify-center gap-3">
                  <Camera size={18} className="text-white/50" />
-                 <span className="text-xs sm:text-sm text-white/70 font-bold uppercase tracking-wider">Photo proof required in chat</span>
+                 <span className="text-xs sm:text-sm text-white/70 font-bold uppercase tracking-wider">Photo Proof Required In GroupMe!</span>
               </div>
               <div className="flex gap-3 pt-2">
                 <Button variant="secondary" className="flex-1" onClick={() => setIsModalOpen(false)}>Cancel</Button>
@@ -1272,13 +1272,13 @@
 
       return (
         <div className="min-h-screen font-sans relative overflow-x-hidden">
-          <main className="max-w-6xl mx-auto w-full px-4 pt-6 pb-[120px] relative z-10 min-h-[90vh]">
+          <main className="max-w-6xl mx-auto w-full px-4 pt-6 relative z-10 min-h-[90vh]" style={{ paddingBottom: 'calc(140px + env(safe-area-inset-bottom))' }}>
             {renderTabContent()}
           </main>
 
           {/* Floating Pill Navigation */}
-          <nav className="fixed bottom-6 left-4 right-4 z-50 pointer-events-none flex justify-center">
-            <div className="bg-black/60 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-auto">
+          <nav className="fixed left-4 right-4 z-50 pointer-events-none flex justify-center" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
+            <div className="bg-black/80 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
               {[
                 { id: 'dashboard', label: 'Mission', icon: Crosshair },
                 { id: 'leaderboard', label: 'Standings', icon: Trophy },
@@ -1288,14 +1288,14 @@
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-2 px-4 md:px-6 py-3 md:py-3.5 font-bold transition-all rounded-full ${
+                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-3 md:py-3.5 font-bold transition-all rounded-full whitespace-nowrap ${
                     activeTab === tab.id
                       ? 'bg-white text-black shadow-lg scale-[1.02]'
-                      : 'text-white/50 hover:text-white hover:bg-white/10'
+                      : 'text-white/80 hover:text-white hover:bg-white/10'
                   }`}
                 >
                   <tab.icon size={18} className="shrink-0" />
-                  <span className={`text-[11px] md:text-sm tracking-wide ${activeTab === tab.id ? 'block' : 'hidden md:block'}`}>{tab.label}</span>
+                  <span className="text-[11px] md:text-sm tracking-wide block">{tab.label}</span>
                 </button>
               ))}
             </div>
