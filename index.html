@@ -276,6 +276,7 @@
     const HeartPulse = (props) => <IconWrapper name="heart-pulse" {...props} />;
     const UserMinus = (props) => <IconWrapper name="user-minus" {...props} />;
     const Edit3 = (props) => <IconWrapper name="edit-3" {...props} />;
+    const Ghost = (props) => <IconWrapper name="ghost" {...props} />;
 
     const DEFAULT_HOUSES = [
       { id: 'H1', name: 'Gryffindor', points: 0 },
@@ -283,6 +284,8 @@
       { id: 'H3', name: 'Ravenclaw', points: 0 },
       { id: 'H4', name: 'Hufflepuff', points: 0 }
     ];
+
+    const TAUNT_EMOJIS = ['😈', '👀', '🏃', '🎯', '💀', '😂', '🔥', '👻'];
 
     const Button = ({ children, onClick, variant = 'primary', className = '', disabled = false, type = 'button' }) => {
       const baseStyle = "px-6 py-4 rounded-full font-bold transition-all duration-300 flex items-center justify-center gap-2";
@@ -557,10 +560,14 @@
       const [timeLeft, setTimeLeft] = useState(null);
       const [reviveTargetId, setReviveTargetId] = useState("");
       const [showFireworks, setShowFireworks] = useState(false);
+      const [tauntCooldown, setTauntCooldown] = useState(0);
+      const [tauntSentFlash, setTauntSentFlash] = useState(false);
+      const [incomingTaunt, setIncomingTaunt] = useState(null);
 
       const target = useMemo(() => players.find(p => p.id === currentUser?.targetId), [players, currentUser]);
       const eliminatedPlayers = useMemo(() => players.filter(p => p.status === 'eliminated'), [players]);
       const aliveCount = useMemo(() => players.filter(p => p.status === 'alive').length, [players]);
+      const myHunter = useMemo(() => players.find(p => p.targetId === currentUser?.id && p.id !== currentUser?.id), [players, currentUser]);
       const isTrueWinner = currentUser && currentUser.targetId === currentUser.id && aliveCount <= 1;
       // A target that's been assigned to this player but that they haven't personally
       // "acquired" yet - their 24h clock only starts once they tap Acquire Target, so
@@ -637,6 +644,43 @@
         return () => clearInterval(timerId);
       }, [currentUser, isRevealing]);
 
+      // Poll for anonymous taunts sent by whoever this player is hunting
+      useEffect(() => {
+        if (!currentUser) return;
+        let cancelled = false;
+        const checkTaunts = async () => {
+          const { data } = await supabase.from('taunts').select('id, emoji').eq('recipient_id', currentUser.id).eq('seen', false).order('created_at', { ascending: false });
+          if (cancelled || !data || data.length === 0) return;
+          setIncomingTaunt({ emoji: data[0].emoji });
+          await supabase.from('taunts').update({ seen: true }).in('id', data.map(t => t.id));
+        };
+        checkTaunts();
+        const interval = setInterval(checkTaunts, 5000);
+        return () => { cancelled = true; clearInterval(interval); };
+      }, [currentUser?.id]);
+
+      // Auto-dismiss the incoming taunt toast
+      useEffect(() => {
+        if (!incomingTaunt) return;
+        const t = setTimeout(() => setIncomingTaunt(null), 4000);
+        return () => clearTimeout(t);
+      }, [incomingTaunt]);
+
+      // Tick the send-taunt cooldown down once per second
+      useEffect(() => {
+        if (tauntCooldown <= 0) return;
+        const t = setTimeout(() => setTauntCooldown(c => c - 1), 1000);
+        return () => clearTimeout(t);
+      }, [tauntCooldown]);
+
+      const sendTaunt = async (emoji) => {
+        if (!myHunter || tauntCooldown > 0) return;
+        setTauntCooldown(60);
+        setTauntSentFlash(true);
+        setTimeout(() => setTauntSentFlash(false), 2000);
+        await supabase.from('taunts').insert({ sender_id: currentUser.id, recipient_id: myHunter.id, emoji });
+      };
+
       if (!currentUser) return null;
 
       return (
@@ -682,6 +726,31 @@
               <Button variant="primary" className="!bg-black !text-white w-full sm:w-auto shrink-0" onClick={() => setIsDartModalOpen(true)}>
                 Deploy Dart
               </Button>
+            </div>
+          )}
+
+          {/* Taunt Your Hunter - anonymous emoji jab at whoever is currently hunting you */}
+          {currentUser.status === 'alive' && myHunter && (
+            <div className="black-glass-card-subtle rounded-[28px] sm:rounded-[36px] p-4 sm:p-6">
+              <div className="flex items-center justify-between mb-3 gap-2">
+                <h3 className="text-xs sm:text-sm font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
+                  <Ghost size={16} className="text-white/40" /> Taunt Your Hunter
+                </h3>
+                {tauntSentFlash && <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider animate-pulse">Sent anonymously!</span>}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {TAUNT_EMOJIS.map(emoji => (
+                  <button
+                    key={emoji}
+                    disabled={tauntCooldown > 0}
+                    onClick={() => sendTaunt(emoji)}
+                    className="text-2xl w-11 h-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100"
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+              {tauntCooldown > 0 && <p className="text-[10px] text-white/30 mt-3">Next taunt available in {tauntCooldown}s</p>}
             </div>
           )}
 
@@ -820,6 +889,16 @@
           </Modal>
 
           {showFireworks && <Fireworks onComplete={() => setShowFireworks(false)} />}
+
+          {incomingTaunt && ReactDOM.createPortal(
+            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[75] pointer-events-none animate-in fade-in slide-in-from-top-4 duration-300">
+              <div className="black-glass-card rounded-full px-5 sm:px-6 py-3 flex items-center gap-3 shadow-2xl">
+                <span className="text-3xl leading-none">{incomingTaunt.emoji}</span>
+                <span className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">Someone is watching you...</span>
+              </div>
+            </div>,
+            document.body
+          )}
         </div>
       );
     };
@@ -1366,6 +1445,7 @@
         await supabase.from('game_state').update({ active: false }).eq('id', 1);
         await supabase.from('houses').update({ points: 0 }).neq('id', 0);
         await supabase.from('players').update({ status: 'alive', target_id: null, eliminations: 0, has_golden_dart: false, target_assigned_at: null, target_acquired_at: null }).neq('id', 0);
+        await supabase.from('taunts').delete().neq('id', 0);
       };
 
       const handleElimination = async (eliminatorId, targetId) => {
