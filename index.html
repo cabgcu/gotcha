@@ -308,9 +308,9 @@
 
     const Modal = ({ isOpen, onClose, title, children }) => {
       if (!isOpen) return null;
-      return (
+      return ReactDOM.createPortal(
         <div className="fixed inset-0 bg-black/80 flex items-end md:items-center justify-center z-[70] backdrop-blur-md transition-opacity">
-          <div className="black-glass-card w-full md:max-w-md overflow-hidden shadow-2xl rounded-t-[40px] md:rounded-[36px] animate-slide-up md:animate-none">
+          <div className="black-glass-card w-full md:max-w-md overflow-hidden shadow-2xl rounded-t-[40px] md:rounded-[36px] animate-slide-up md:animate-none" style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}>
             <div className="p-6 border-b border-white/10 flex justify-between items-center relative">
               <div className="absolute top-3 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/20 rounded-full md:hidden"></div>
               <h3 className="font-bold text-xl text-white mt-2 md:mt-0">{title}</h3>
@@ -320,7 +320,8 @@
               {children}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       );
     };
 
