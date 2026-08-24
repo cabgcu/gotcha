@@ -170,6 +170,16 @@
     
     /* Target Reveal Blur Animation */
     .motion-blur { filter: blur(2px); transform: scale(1.02); opacity: 0.8; }
+
+    /* Taunt Emoji Pop */
+    @keyframes tauntPop {
+        0% { opacity: 0; transform: scale(0.3) translateY(10px); }
+        15% { opacity: 1; transform: scale(1.25) translateY(0); }
+        25% { transform: scale(1) translateY(0); }
+        80% { opacity: 1; transform: scale(1) translateY(-10px); }
+        100% { opacity: 0; transform: scale(0.9) translateY(-40px); }
+    }
+    .animate-taunt-pop { animation: tauntPop 2.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
   </style>
 </head>
 <body class="text-white min-h-screen w-full relative overflow-x-hidden selection:bg-white/30 antialiased">
@@ -560,9 +570,8 @@
       const [timeLeft, setTimeLeft] = useState(null);
       const [reviveTargetId, setReviveTargetId] = useState("");
       const [showFireworks, setShowFireworks] = useState(false);
-      const [tauntCooldown, setTauntCooldown] = useState(0);
       const [tauntSentFlash, setTauntSentFlash] = useState(false);
-      const [incomingTaunt, setIncomingTaunt] = useState(null);
+      const [floatingTaunts, setFloatingTaunts] = useState([]);
 
       const target = useMemo(() => players.find(p => p.id === currentUser?.targetId), [players, currentUser]);
       const eliminatedPlayers = useMemo(() => players.filter(p => p.status === 'eliminated'), [players]);
@@ -644,40 +653,40 @@
         return () => clearInterval(timerId);
       }, [currentUser, isRevealing]);
 
-      // Poll for anonymous taunts sent by whoever this player is hunting
+      // Poll for anonymous taunts sent by whoever this player is hunting - each one
+      // pops up at a random spot on screen and fades out on its own, so a burst of
+      // spammed taunts shows up as a burst of emoji, not one message at a time.
       useEffect(() => {
         if (!currentUser) return;
         let cancelled = false;
         const checkTaunts = async () => {
-          const { data } = await supabase.from('taunts').select('id, emoji').eq('recipient_id', currentUser.id).eq('seen', false).order('created_at', { ascending: false });
+          const { data } = await supabase.from('taunts').select('id, emoji').eq('recipient_id', currentUser.id).eq('seen', false).order('created_at', { ascending: true });
           if (cancelled || !data || data.length === 0) return;
-          setIncomingTaunt({ emoji: data[0].emoji });
+          const newOnes = data.map(t => ({
+            key: `${t.id}-${Math.random()}`,
+            emoji: t.emoji,
+            left: 5 + Math.random() * 80,
+            top: 8 + Math.random() * 70,
+            rotate: -20 + Math.random() * 40,
+            delay: Math.random() * 500
+          }));
+          setFloatingTaunts(prev => [...prev, ...newOnes]);
           await supabase.from('taunts').update({ seen: true }).in('id', data.map(t => t.id));
+          newOnes.forEach(item => {
+            setTimeout(() => {
+              setFloatingTaunts(prev => prev.filter(f => f.key !== item.key));
+            }, item.delay + 2600);
+          });
         };
         checkTaunts();
         const interval = setInterval(checkTaunts, 5000);
         return () => { cancelled = true; clearInterval(interval); };
       }, [currentUser?.id]);
 
-      // Auto-dismiss the incoming taunt toast
-      useEffect(() => {
-        if (!incomingTaunt) return;
-        const t = setTimeout(() => setIncomingTaunt(null), 4000);
-        return () => clearTimeout(t);
-      }, [incomingTaunt]);
-
-      // Tick the send-taunt cooldown down once per second
-      useEffect(() => {
-        if (tauntCooldown <= 0) return;
-        const t = setTimeout(() => setTauntCooldown(c => c - 1), 1000);
-        return () => clearTimeout(t);
-      }, [tauntCooldown]);
-
       const sendTaunt = async (emoji) => {
-        if (!myHunter || tauntCooldown > 0) return;
-        setTauntCooldown(60);
+        if (!myHunter) return;
         setTauntSentFlash(true);
-        setTimeout(() => setTauntSentFlash(false), 2000);
+        setTimeout(() => setTauntSentFlash(false), 1500);
         await supabase.from('taunts').insert({ sender_id: currentUser.id, recipient_id: myHunter.id, emoji });
       };
 
@@ -738,19 +747,17 @@
                 </h3>
                 {tauntSentFlash && <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wider animate-pulse">Sent anonymously!</span>}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-nowrap gap-2 overflow-x-auto no-scrollbar">
                 {TAUNT_EMOJIS.map(emoji => (
                   <button
                     key={emoji}
-                    disabled={tauntCooldown > 0}
                     onClick={() => sendTaunt(emoji)}
-                    className="text-2xl w-11 h-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 active:scale-90 transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:active:scale-100"
+                    className="shrink-0 text-2xl w-11 h-11 flex items-center justify-center rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 active:scale-90 transition-all"
                   >
                     {emoji}
                   </button>
                 ))}
               </div>
-              {tauntCooldown > 0 && <p className="text-[10px] text-white/30 mt-3">Next taunt available in {tauntCooldown}s</p>}
             </div>
           )}
 
@@ -890,12 +897,13 @@
 
           {showFireworks && <Fireworks onComplete={() => setShowFireworks(false)} />}
 
-          {incomingTaunt && ReactDOM.createPortal(
-            <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[75] pointer-events-none animate-in fade-in slide-in-from-top-4 duration-300">
-              <div className="black-glass-card rounded-full px-5 sm:px-6 py-3 flex items-center gap-3 shadow-2xl">
-                <span className="text-3xl leading-none">{incomingTaunt.emoji}</span>
-                <span className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">Someone is watching you...</span>
-              </div>
+          {floatingTaunts.length > 0 && ReactDOM.createPortal(
+            <div className="fixed inset-0 z-[75] pointer-events-none overflow-hidden">
+              {floatingTaunts.map(t => (
+                <div key={t.key} className="absolute" style={{ left: `${t.left}%`, top: `${t.top}%`, transform: `rotate(${t.rotate}deg)` }}>
+                  <span className="block text-5xl sm:text-6xl animate-taunt-pop" style={{ animationDelay: `${t.delay}ms` }}>{t.emoji}</span>
+                </div>
+              ))}
             </div>,
             document.body
           )}
