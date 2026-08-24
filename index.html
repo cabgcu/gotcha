@@ -1366,14 +1366,17 @@
       }
 
       return (
-        <div className="min-h-screen font-sans relative overflow-x-hidden">
-          <main className="max-w-6xl mx-auto w-full px-4 pt-6 relative z-10 min-h-[90vh]" style={{ paddingBottom: 'calc(180px + env(safe-area-inset-bottom))' }}>
+        <div className="font-sans relative overflow-x-hidden flex flex-col" style={{ height: '100dvh', minHeight: '100dvh' }}>
+          <main className="max-w-6xl mx-auto w-full px-4 pt-6 pb-8 relative z-10 flex-1 min-h-0 overflow-y-auto">
             {renderTabContent()}
           </main>
 
-          {/* Floating Pill Navigation */}
-          <nav className="fixed left-4 right-4 z-50 pointer-events-none flex justify-center" style={{ bottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}>
-            <div className="bg-black/80 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] pointer-events-auto max-w-full overflow-x-auto no-scrollbar">
+          {/* Pill Navigation - part of the layout flow, so it can never overlap page content */}
+          <nav
+            className="shrink-0 z-50 flex justify-center px-4 pt-3"
+            style={{ paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
+          >
+            <div className="bg-black/80 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto no-scrollbar">
               {[
                 { id: 'dashboard', label: 'Mission', icon: Crosshair },
                 { id: 'leaderboard', label: 'Standings', icon: Trophy },
