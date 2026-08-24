@@ -244,9 +244,12 @@
     const IconWrapper = ({ name, size = 24, className = '', color = 'currentColor' }) => {
       const iconRef = useRef(null);
       useEffect(() => {
-        if (iconRef.current && window.lucide) {
+        if (iconRef.current && window.lucide && window.lucide.icons) {
+           const pascalName = name.replace(/(^\w|-\w)/g, c => c.replace('-', '').toUpperCase());
+           const iconData = window.lucide.icons[pascalName] || window.lucide.icons[name];
+           if (!iconData) return;
            window.lucide.createIcons({
-             icons: { [name]: window.lucide.icons[name] },
+             icons: { [name]: iconData },
              nameAttr: 'data-lucide',
              attrs: { class: className, width: size, height: size, stroke: color }
            });
@@ -843,24 +846,36 @@
       const [isResetModalOpen, setIsResetModalOpen] = useState(false);
       const [managingPlayerId, setManagingPlayerId] = useState(null);
       const [isDeletingPlayer, setIsDeletingPlayer] = useState(false);
-      const [isSweeping, setIsSweeping] = useState(false);
       const [autoSweep, setAutoSweep] = useState(false);
 
       const managingPlayer = useMemo(() => players.find(p => p.id === managingPlayerId), [players, managingPlayerId]);
 
+      // Keep latest values available to the interval below without tearing it down on every poll
+      const playersRef = useRef(players);
+      useEffect(() => { playersRef.current = players; }, [players]);
+      const gameActiveRef = useRef(gameActive);
+      useEffect(() => { gameActiveRef.current = gameActive; }, [gameActive]);
+      const onSweepExpiredRef = useRef(onSweepExpired);
+      useEffect(() => { onSweepExpiredRef.current = onSweepExpired; }, [onSweepExpired]);
+      const isSweepingRef = useRef(false);
+
       // Auto-Sweeper Engine
       useEffect(() => {
-        if (!gameActive || !players.length || !autoSweep) return;
-        const interval = setInterval(() => {
+        if (!autoSweep) return;
+        const interval = setInterval(async () => {
+            if (isSweepingRef.current || !gameActiveRef.current || !playersRef.current.length) return;
             const now = new Date();
-            const hasExpired = players.some(p => {
+            const hasExpired = playersRef.current.some(p => {
                 if (p.status !== 'alive' || !p.targetAssignedAt) return false;
                 return (now - new Date(p.targetAssignedAt)) > 24 * 60 * 60 * 1000;
             });
-            if (hasExpired && !isSweeping) onSweepExpired();
+            if (hasExpired) {
+              isSweepingRef.current = true;
+              try { await onSweepExpiredRef.current(); } finally { isSweepingRef.current = false; }
+            }
         }, 30000); // Check every 30 seconds
         return () => clearInterval(interval);
-      }, [gameActive, players, isSweeping, autoSweep, onSweepExpired]);
+      }, [autoSweep]);
 
       const handleSyncRoster = async () => {
         setSyncing(true);
