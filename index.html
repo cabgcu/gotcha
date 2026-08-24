@@ -421,7 +421,7 @@
                 {error && <p className="text-red-400 text-xs mt-3 text-center font-bold">{error}</p>}
               </div>
               <Button type="submit" variant="primary" className="w-full mt-2" disabled={busy}>
-                {busy ? 'Authenticating...' : 'Enter the Hunt'}
+                {busy ? 'Authenticating...' : 'Start Gotcha'}
               </Button>
             </form>
 
@@ -585,7 +585,7 @@
 
                 <div className="absolute top-5 sm:top-8 left-5 sm:left-8 right-5 sm:right-8 flex justify-between items-start z-20 pointer-events-none w-auto">
                   <h2 className="text-[10px] sm:text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-1.5 sm:gap-2">
-                    <Crosshair size={14} /> Mission
+                    <Crosshair size={14} /> Target
                   </h2>
                   
                   {timeLeft && currentUser.targetId !== currentUser.id && (
@@ -1403,15 +1403,15 @@
           >
             <div className="bg-black/80 backdrop-blur-3xl border border-white/10 p-1.5 md:p-2 rounded-full flex shadow-[0_20px_40px_rgba(0,0,0,0.8)] max-w-full overflow-x-auto no-scrollbar">
               {[
-                { id: 'dashboard', label: 'Mission', icon: Crosshair },
+                { id: 'dashboard', label: 'Target', icon: Crosshair },
                 { id: 'leaderboard', label: 'Standings', icon: Trophy },
                 { id: 'rules', label: 'Rules', icon: ShieldAlert },
-                { id: 'admin', label: 'Admin', icon: Settings }
+                { id: 'admin', label: 'Admin', icon: Settings, desktopOnly: true }
               ].map(tab => (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 md:gap-2 px-3 md:px-6 py-3 md:py-3.5 font-bold transition-all rounded-full whitespace-nowrap ${
+                  className={`items-center gap-1.5 md:gap-2 px-3 md:px-6 py-3 md:py-3.5 font-bold transition-all rounded-full whitespace-nowrap ${tab.desktopOnly ? 'hidden md:flex' : 'flex'} ${
                     activeTab === tab.id
                       ? 'bg-white text-black shadow-lg scale-[1.02]'
                       : 'text-white/80 hover:text-white hover:bg-white/10'
